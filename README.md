@@ -7,7 +7,8 @@
 
 ## 🌐 Live Access URLs
 - **Instant Live Cloud App**: [https://ais-pre-sr3dg42bjran77lnm5aswc-252756721792.asia-east1.run.app](https://ais-pre-sr3dg42bjran77lnm5aswc-252756721792.asia-east1.run.app)
-- **GitHub Pages Deployment**: `https://sarlayash.github.io/DSAPTIQ/` (automated via GitHub Actions on `main` branch)
+- **GitHub Repository**: [https://github.com/sarlayash/-DSAPTIQ-DSA-APTItude-IQ-DSAPTIQ](https://github.com/sarlayash/-DSAPTIQ-DSA-APTItude-IQ-DSAPTIQ)
+- **Live GitHub Pages URL**: [https://sarlayash.github.io/-DSAPTIQ-DSA-APTItude-IQ-DSAPTIQ/](https://sarlayash.github.io/-DSAPTIQ-DSA-APTItude-IQ-DSAPTIQ/) (Automated via GitHub Actions or `/docs` static branch)
 
 ---
 
