@@ -121,10 +121,18 @@ export function recordWheelSpin(rewardId: string, rewardLabel: string): WheelSpi
 }
 
 export function resetAllLearnerData(): void {
-  localStorage.removeItem(STORAGE_KEYS.PROFILE);
-  localStorage.removeItem(STORAGE_KEYS.ATTEMPTS);
-  localStorage.removeItem(STORAGE_KEYS.WHEEL_SPINS);
-  localStorage.removeItem(STORAGE_KEYS.ACTIVE_SESSION);
+  try {
+    localStorage.removeItem(STORAGE_KEYS.PROFILE);
+    localStorage.removeItem(STORAGE_KEYS.OLD_PROFILE);
+    localStorage.removeItem(STORAGE_KEYS.ATTEMPTS);
+    localStorage.removeItem(STORAGE_KEYS.OLD_ATTEMPTS);
+    localStorage.removeItem(STORAGE_KEYS.WHEEL_SPINS);
+    localStorage.removeItem(STORAGE_KEYS.OLD_WHEEL_SPINS);
+    localStorage.removeItem(STORAGE_KEYS.ACTIVE_SESSION);
+    sessionStorage.clear();
+  } catch (e) {
+    console.error('Error resetting learner session data:', e);
+  }
 }
 
 export function seedDemoLearnerData(): { profile: LearnerProfile; attempts: QuestionAttempt[] } {

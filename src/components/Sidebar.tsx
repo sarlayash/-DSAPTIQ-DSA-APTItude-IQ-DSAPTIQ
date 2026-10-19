@@ -13,7 +13,8 @@ import {
   User,
   Flame,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  LogOut
 } from 'lucide-react';
 import { LearnerProfile, PRISnapshot } from '../types';
 
@@ -26,6 +27,7 @@ interface SidebarProps {
   pri: PRISnapshot;
   onOpenProfile: () => void;
   onLogout: () => void;
+  onLogOffAndReset?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -36,6 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   learner,
   pri,
   onOpenProfile,
+  onLogOffAndReset,
 }) => {
   const navSections = [
     {
@@ -285,6 +288,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             )}
 
+            {/* Log Off & Reset Session Option */}
+            {onLogOffAndReset && (
+              <button
+                onClick={onLogOffAndReset}
+                className="w-full py-1.5 px-2.5 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 flex items-center justify-center gap-1.5 text-[11px] font-mono font-bold transition-all cursor-pointer"
+                title="Log Off & Reset Active Session"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-600" />
+                <span>Log Off & Reset Session</span>
+              </button>
+            )}
+
             {/* Bottom Collapse Toggle Button */}
             <button
               onClick={() => setIsCollapsed(true)}
@@ -320,6 +335,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 title="Begin Assessment"
               >
                 <User className="w-3.5 h-3.5 text-white" />
+              </button>
+            )}
+
+            {onLogOffAndReset && (
+              <button
+                onClick={onLogOffAndReset}
+                className="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 flex items-center justify-center border border-red-200 shadow-2xs cursor-pointer transition-colors"
+                title="Log Off & Reset Active Session"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-600" />
               </button>
             )}
 

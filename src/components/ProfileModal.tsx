@@ -6,6 +6,7 @@ import {
   Flame,
   Award,
   LogOut,
+  RotateCcw,
   X
 } from 'lucide-react';
 import { LearnerProfile, LearningLevel, TargetGoal } from '../types';
@@ -17,6 +18,7 @@ interface ProfileModalProps {
   onClose: () => void;
   onUpdateProfile: (updated: LearnerProfile) => void;
   onSwitchAccount: () => void;
+  onLogOffAndReset?: () => void;
 }
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -25,6 +27,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   onClose,
   onUpdateProfile,
   onSwitchAccount,
+  onLogOffAndReset,
 }) => {
   const [copied, setCopied] = useState(false);
   const [name, setName] = useState(learner.name);
@@ -169,15 +172,30 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             </p>
           )}
 
-          <div className="flex items-center justify-between pt-2">
-            <button
-              type="button"
-              onClick={onSwitchAccount}
-              className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-mono font-bold cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Switch Profile</span>
-            </button>
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onSwitchAccount}
+                className="text-xs text-blue-900 hover:text-blue-950 flex items-center gap-1 font-mono font-bold cursor-pointer"
+                title="Switch account without clearing stored data"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Switch Profile</span>
+              </button>
+
+              {onLogOffAndReset && (
+                <button
+                  type="button"
+                  onClick={onLogOffAndReset}
+                  className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-mono font-bold cursor-pointer"
+                  title="Wipe current profile, attempts, streak, and reset session"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-red-600" />
+                  <span>Log Off & Reset</span>
+                </button>
+              )}
+            </div>
 
             <button
               type="submit"

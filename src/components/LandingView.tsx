@@ -23,6 +23,7 @@ interface LandingViewProps {
   savedProfile: LearnerProfile | null;
   onResumeSaved: () => void;
   onSeedDemo: () => void;
+  onResetSession?: () => void;
 }
 
 export const LandingView: React.FC<LandingViewProps> = ({
@@ -31,6 +32,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
   savedProfile,
   onResumeSaved,
   onSeedDemo,
+  onResetSession,
 }) => {
   const [name, setName] = useState('');
   const [level, setLevel] = useState<LearningLevel>('Intermediate');
@@ -176,14 +178,28 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     <div className="text-[11px] text-blue-900/80 font-mono">Streak: {savedProfile.streakCount}d · {savedProfile.target}</div>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={onResumeSaved}
-                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shrink-0 shadow-xs cursor-pointer"
-                >
-                  <span>Resume Journey</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-red-400" />
-                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={onResumeSaved}
+                    className="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shrink-0 shadow-xs cursor-pointer"
+                  >
+                    <span>Resume Journey</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-red-400" />
+                  </button>
+
+                  {onResetSession && (
+                    <button
+                      type="button"
+                      onClick={onResetSession}
+                      className="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                      title="Log Off & Reset Saved Session"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-red-600" />
+                      <span>Reset</span>
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 

@@ -12,6 +12,7 @@ import { AdminView } from './components/AdminView';
 import { IDEView } from './components/IDEView';
 import { Footer } from './components/Footer';
 import { ProfileModal } from './components/ProfileModal';
+import { ResetSessionModal } from './components/ResetSessionModal';
 import {
   LearnerProfile,
   QuestionAttempt,
@@ -35,6 +36,7 @@ export default function App() {
   const [attempts, setAttempts] = useState<QuestionAttempt[]>([]);
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState<boolean>(false);
   const [savedExistingProfile, setSavedExistingProfile] = useState<LearnerProfile | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
@@ -173,6 +175,17 @@ export default function App() {
     setLearner(null);
   };
 
+  const handleLogOffAndResetSession = () => {
+    resetAllLearnerData();
+    setLearner(null);
+    setAttempts([]);
+    setSavedExistingProfile(null);
+    setCurrentTab('dashboard');
+    setIsProfileModalOpen(false);
+    setIsResetModalOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleRefreshAdminData = () => {
     const existing = getStoredProfile();
     setLearner(existing);
@@ -193,6 +206,7 @@ export default function App() {
         onOpenProfile={() => setIsProfileModalOpen(true)}
         isSidebarCollapsed={isSidebarCollapsed}
         onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
+        onLogOffAndReset={() => setIsResetModalOpen(true)}
       />
 
       {/* Main Body Layout: Left Navigation Sidebar + Workspaces Content */}
@@ -207,6 +221,7 @@ export default function App() {
           pri={pri}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onLogout={handleSwitchAccount}
+          onLogOffAndReset={() => setIsResetModalOpen(true)}
         />
 
         {/* View Routing Area */}
@@ -227,6 +242,7 @@ export default function App() {
                 savedProfile={savedExistingProfile}
                 onResumeSaved={handleResumeSaved}
                 onSeedDemo={handleSeedDemo}
+                onResetSession={() => setIsResetModalOpen(true)}
               />
             )
           )}
@@ -309,8 +325,20 @@ export default function App() {
           onClose={() => setIsProfileModalOpen(false)}
           onUpdateProfile={(updated) => setLearner(updated)}
           onSwitchAccount={handleSwitchAccount}
+          onLogOffAndReset={() => {
+            setIsProfileModalOpen(false);
+            setIsResetModalOpen(true);
+          }}
         />
       )}
+
+      {/* Global Log Off & Reset Session Confirmation Modal */}
+      <ResetSessionModal
+        isOpen={isResetModalOpen}
+        learner={learner || savedExistingProfile}
+        onClose={() => setIsResetModalOpen(false)}
+        onConfirmReset={handleLogOffAndResetSession}
+      />
     </div>
   );
 }

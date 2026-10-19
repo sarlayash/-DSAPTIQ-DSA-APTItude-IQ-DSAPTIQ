@@ -7,7 +7,8 @@ import {
   Terminal,
   Sparkles,
   BookOpen,
-  Cpu
+  Cpu,
+  LogOut
 } from 'lucide-react';
 import { LearnerProfile, PRISnapshot } from '../types';
 import { TimeZonesBar } from './TimeZonesBar';
@@ -21,6 +22,7 @@ interface HeaderProps {
   onOpenProfile: () => void;
   isSidebarCollapsed: boolean;
   onToggleSidebar: () => void;
+  onLogOffAndReset?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -31,6 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenProfile,
   isSidebarCollapsed,
   onToggleSidebar,
+  onLogOffAndReset,
 }) => {
   const [showTimeZones, setShowTimeZones] = useState<boolean>(true);
 
@@ -194,6 +197,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onOpenProfile}
               className="flex items-center gap-2 pl-2 pr-3 py-1 rounded-xl bg-white border border-slate-200 hover:border-blue-300 transition-all cursor-pointer shadow-2xs group"
+              title="Manage Profile & Settings"
             >
               <div className="w-7 h-7 rounded-full bg-blue-950 text-white font-extrabold text-xs flex items-center justify-center">
                 {learner.name.charAt(0).toUpperCase()}
@@ -211,6 +215,21 @@ export const Header: React.FC<HeaderProps> = ({
               className="px-3.5 py-1.5 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
               Begin Journey
+            </button>
+          )}
+
+          {/* Dedicated Log Off & Reset Session Button */}
+          {onLogOffAndReset && (
+            <button
+              onClick={onLogOffAndReset}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 hover:text-red-700 transition-all cursor-pointer shadow-2xs group"
+              title="Log Off & Reset Active Session"
+              aria-label="Log Off and Reset Session"
+            >
+              <LogOut className="w-3.5 h-3.5 text-red-600 group-hover:rotate-12 transition-transform" />
+              <span className="text-xs font-mono font-bold hidden md:inline">
+                Log Off & Reset
+              </span>
             </button>
           )}
         </div>
