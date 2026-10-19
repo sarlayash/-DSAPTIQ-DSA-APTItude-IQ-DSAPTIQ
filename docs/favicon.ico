@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="silver-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#E2E8F0" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E232B" />
+      <stop offset="100%" stop-color="#08090B" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg-grad)" stroke="#475569" stroke-width="2" />
+  <!-- Hexagon / Node network -->
+  <polygon points="32,10 50,20 50,44 32,54 14,44 14,20" fill="none" stroke="url(#silver-grad)" stroke-width="2.5" stroke-dasharray="3,2" opacity="0.6" />
+  <!-- Central Stylized D & Q -->
+  <text x="32" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="22" fill="url(#silver-grad)" text-anchor="middle" letter-spacing="-1">Q</text>
+  <circle cx="32" cy="10" r="3" fill="#38BDF8" />
+  <circle cx="50" cy="20" r="3" fill="#818CF8" />
+  <circle cx="50" cy="44" r="3" fill="#34D399" />
+  <circle cx="14" cy="20" r="3" fill="#F472B6" />
+  <circle cx="14" cy="44" r="3" fill="#FBBF24" />
+  <circle cx="32" cy="54" r="3" fill="#60A5FA" />
+</svg>
