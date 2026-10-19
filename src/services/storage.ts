@@ -58,6 +58,10 @@ export function createNewLearner(
     bookmarks: [],
     understoodExamples: [],
     badges: ['DSAPTIQ Pioneer'],
+    currentDayLevel: 1,
+    completedLevels: [],
+    totalXP: 100,
+    earnedCertificates: [],
   };
   saveProfile(newProfile);
   return newProfile;
@@ -149,7 +153,24 @@ export function seedDemoLearnerData(): { profile: LearnerProfile; attempts: Ques
     bonusPoints: 450,
     bookmarks: ['Q001', 'Q047', 'EX26', 'EX49'],
     understoodExamples: ['EX01', 'EX02', 'EX26', 'EX36', 'EX49'],
-    badges: ['DSAPTIQ Pioneer', '5-Day Streak Master', 'Logic Virtuoso'],
+    badges: ['DSAPTIQ Pioneer', '5-Day Streak Master', 'Logic Virtuoso', 'Array Pioneer', 'String Maestro', 'Foundation Laureate'],
+    currentDayLevel: 8,
+    completedLevels: [1, 2, 3, 4, 5, 6, 7],
+    totalXP: 2450,
+    earnedCertificates: [
+      {
+        levelNumber: 1,
+        certificateTitle: 'Day 1 Array Mechanics Certificate of Completion',
+        issuedAt: new Date(Date.now() - 6 * 86400000).toISOString().split('T')[0],
+        certificateId: 'DSAPTIQ-CERT-LVL1-8392-2026',
+      },
+      {
+        levelNumber: 7,
+        certificateTitle: 'Level 7 Foundation Placement Readiness Certificate',
+        issuedAt: new Date(Date.now() - 1 * 86400000).toISOString().split('T')[0],
+        certificateId: 'DSAPTIQ-CERT-LVL7-9921-2026',
+      }
+    ],
   };
   saveProfile(profile);
 

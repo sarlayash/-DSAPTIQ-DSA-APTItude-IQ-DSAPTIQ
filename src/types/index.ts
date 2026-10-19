@@ -24,6 +24,36 @@ export type ExampleCategory =
   | 'Code Tracing & Complexity'
   | 'Industry Scenarios';
 
+export type LevelDifficulty = 'Easy' | 'Hard' | 'Very Hard' | 'Super Tough';
+
+export interface DailyLevel {
+  levelNumber: number; // 1 to 30
+  dayNumber: number; // 1 to 30
+  title: string;
+  domain: string;
+  difficulty: LevelDifficulty;
+  xpReward: number;
+  badgeName: string;
+  badgeTitle: string;
+  badgeTier: 'Bronze' | 'Silver' | 'Gold' | 'Diamond' | 'Apex';
+  description: string;
+  coreConcepts: string[];
+  solvedChallenge: {
+    title: string;
+    description: string;
+    keyTakeaway: string;
+  };
+  hasCertificate: boolean;
+  certificateTitle?: string;
+}
+
+export interface LearnerCertificateRecord {
+  levelNumber: number;
+  certificateTitle: string;
+  issuedAt: string;
+  certificateId: string;
+}
+
 export interface LearnerProfile {
   id: string;
   name: string;
@@ -38,6 +68,11 @@ export interface LearnerProfile {
   bookmarks: string[]; // question or example IDs
   understoodExamples: string[];
   badges: string[];
+  // Level 1 to 30 Progression
+  currentDayLevel?: number;
+  completedLevels?: number[];
+  totalXP?: number;
+  earnedCertificates?: LearnerCertificateRecord[];
 }
 
 export interface Question {

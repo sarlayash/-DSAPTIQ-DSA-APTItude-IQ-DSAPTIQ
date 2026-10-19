@@ -13,6 +13,7 @@ import { IDEView } from './components/IDEView';
 import { Footer } from './components/Footer';
 import { ProfileModal } from './components/ProfileModal';
 import { ResetSessionModal } from './components/ResetSessionModal';
+import { LevelsView } from './components/LevelsView';
 import {
   LearnerProfile,
   QuestionAttempt,
@@ -269,6 +270,17 @@ export default function App() {
           )}
 
           {currentTab === 'visualizer' && <VisualizerView />}
+
+          {currentTab === 'levels' && (
+            <LevelsView
+              learner={learner}
+              onUpdateLearner={(updated) => {
+                setLearner(updated);
+                saveProfile(updated);
+              }}
+              onNavigateToTab={setCurrentTab}
+            />
+          )}
 
           {currentTab === 'wheel' && (
             learner ? (

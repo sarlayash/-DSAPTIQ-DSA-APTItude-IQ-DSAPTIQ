@@ -8,7 +8,8 @@ import {
   Sparkles,
   BookOpen,
   Cpu,
-  LogOut
+  LogOut,
+  Award
 } from 'lucide-react';
 import { LearnerProfile, PRISnapshot } from '../types';
 import { TimeZonesBar } from './TimeZonesBar';
@@ -165,6 +166,17 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Sparkles className="w-3.5 h-3.5 text-blue-800" />
               <span>Visualizer</span>
+            </button>
+            <button
+              onClick={() => setCurrentTab('levels')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                currentTab === 'levels'
+                  ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                  : 'text-blue-900 hover:bg-blue-50 hover:text-blue-950'
+              }`}
+            >
+              <Award className="w-3.5 h-3.5 text-red-600" />
+              <span className="text-red-700 font-bold">30 Levels & Certs</span>
             </button>
           </div>
 

@@ -79,6 +79,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           badge: '8 Labs',
           description: 'DSA Visualizers',
         },
+        {
+          id: 'levels',
+          label: '30-Day Levels & Certs',
+          icon: Award,
+          badge: 'Level 1–30',
+          description: 'Daily Badges, XP & Certificates',
+        },
       ],
     },
     {

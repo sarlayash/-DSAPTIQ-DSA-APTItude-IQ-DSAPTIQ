@@ -281,6 +281,45 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
+      {/* 30-Day Levels & Badges Executive Progression Banner */}
+      <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 text-white rounded-2xl p-6 sm:p-7 shadow-md border border-blue-900 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded bg-red-600 text-white text-[10px] font-mono font-extrabold uppercase">
+              LEVEL 1 TO 30 CURRICULUM
+            </span>
+            <span className="text-xs font-mono font-bold text-blue-200">
+              EASY · HARD · VERY HARD · SUPER TOUGH
+            </span>
+          </div>
+
+          <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+            Daily Placement Milestones, Medallion Badges & PNG Certificates
+          </h3>
+
+          <p className="text-xs text-blue-200/90 max-w-2xl leading-relaxed">
+            Progress through all 30 days of industry-calibrated challenges. Earn verified XP, unlock 800×800 PNG medallion badges, and download accredited high-resolution PNG certificates with zero overlapping or border issues.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4 text-xs font-mono pt-1 text-blue-100">
+            <span>Current: <strong className="text-white font-bold">Level {learner.currentDayLevel || 1} / 30</strong></span>
+            <span>·</span>
+            <span>XP Accumulated: <strong className="text-red-400 font-bold">+{(learner.totalXP || 250).toLocaleString()} XP</strong></span>
+            <span>·</span>
+            <span>Badges Unlocked: <strong className="text-white font-bold">{learner.badges?.length || 1}</strong></span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => onNavigate('levels')}
+          className="shrink-0 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-lg flex items-center gap-2.5 transition-all cursor-pointer group"
+        >
+          <Award className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+          <span>Open 30 Levels & Certs</span>
+          <ArrowRight className="w-4 h-4 text-white" />
+        </button>
+      </div>
+
       {/* 4 Feature Workspaces Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Card 1: 100 MCQs Assessment */}
