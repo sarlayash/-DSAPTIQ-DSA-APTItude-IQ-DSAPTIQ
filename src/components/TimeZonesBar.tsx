@@ -110,32 +110,34 @@ export const TimeZonesBar: React.FC<TimeZonesBarProps> = ({ compact = false, cla
   };
 
   return (
-    <div className={`bg-[#0d0f13] border-b border-[#23262d] text-xs text-[#BFC2C9] select-none ${className}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2">
+    <div className={`bg-white border-b border-slate-200 select-none ${className}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Section Header with Live indicator */}
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-slate-300">
-              <Globe className="w-3.5 h-3.5 text-cyan-400" />
-              <span>GLOBAL PLACEMENT TIME ZONES</span>
+            <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-blue-950">
+              <Globe className="w-3.5 h-3.5 text-blue-900" />
+              <span>GLOBAL RECRUITMENT TIME ZONES</span>
             </div>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-mono text-emerald-400 hidden sm:inline">LIVE SYNC</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+            <span className="text-[10px] font-mono text-red-600 font-bold hidden sm:inline">
+              LIVE SYNC
+            </span>
           </div>
 
           {/* Toggle for full world clock matrix */}
           <button
             onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-[11px] font-mono text-slate-400 hover:text-white transition-colors py-0.5 px-2 rounded bg-slate-800/60 border border-slate-700/60"
+            className="flex items-center gap-1 text-[11px] font-mono text-blue-900 hover:text-blue-950 transition-colors py-1 px-2.5 rounded-lg bg-blue-50/80 border border-blue-200 font-semibold cursor-pointer"
           >
-            <Clock className="w-3 h-3 text-slate-300" />
+            <Clock className="w-3 h-3 text-blue-900" />
             <span>{expanded ? 'Compact View' : 'All 5 Time Zones'}</span>
-            {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            {expanded ? <ChevronUp className="w-3 h-3 text-blue-900" /> : <ChevronDown className="w-3 h-3 text-blue-900" />}
           </button>
         </div>
 
         {/* Clocks Grid / Bar */}
-        <div className={`mt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 transition-all ${
+        <div className={`mt-2.5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 transition-all ${
           expanded ? 'block' : 'hidden lg:grid'
         }`}>
           {TIME_ZONES.map((zone) => {
@@ -143,18 +145,18 @@ export const TimeZonesBar: React.FC<TimeZonesBarProps> = ({ compact = false, cla
             return (
               <div
                 key={zone.id}
-                className="bg-[#14171d] hover:bg-[#191d24] border border-[#262930] hover:border-slate-600/70 rounded-lg p-2.5 transition-all shadow-sm"
+                className="bg-white hover:bg-blue-50/40 border border-blue-100 hover:border-blue-300 rounded-xl p-3 transition-all shadow-xs"
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm">{zone.flag}</span>
-                    <span className="font-bold text-xs text-slate-200">{zone.country}</span>
+                    <span className="font-bold text-xs text-blue-950">{zone.country}</span>
                   </div>
                   <span
-                    className={`text-[9px] px-1.5 py-0.2 rounded font-mono ${
+                    className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${
                       isWorkHours
-                        ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'
-                        : 'bg-slate-800/80 text-slate-400 border border-slate-700/60'
+                        ? 'bg-blue-50 text-blue-900 border border-blue-300'
+                        : 'bg-red-50 text-red-600 border border-red-200'
                     }`}
                     title={isWorkHours ? 'Active recruitment / interview window' : 'Off-hours / pre-test revision'}
                   >
@@ -162,13 +164,13 @@ export const TimeZonesBar: React.FC<TimeZonesBarProps> = ({ compact = false, cla
                   </span>
                 </div>
 
-                <div className="text-[10px] text-slate-400 font-mono truncate">{zone.city}</div>
-                <div className="text-sm sm:text-base font-mono font-bold text-white tracking-wider my-0.5">
+                <div className="text-[10px] text-blue-800/80 font-mono truncate">{zone.city}</div>
+                <div className="text-sm sm:text-base font-mono font-extrabold text-blue-950 tracking-wider my-0.5">
                   {timeStr}
                 </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1 border-t border-[#23262d]">
-                  <span>{dayStr}</span>
-                  <span className="text-slate-500 truncate max-w-[85px]" title={zone.interviewTrack}>
+                <div className="flex items-center justify-between text-[10px] text-blue-900/70 font-mono pt-1 border-t border-slate-100">
+                  <span className="font-medium text-blue-900">{dayStr}</span>
+                  <span className="text-red-600 font-bold truncate max-w-[85px]" title={zone.interviewTrack}>
                     {zone.code}
                   </span>
                 </div>

@@ -5,11 +5,7 @@ import {
   Pause,
   RotateCcw,
   SkipForward,
-  SkipBack,
-  Layers,
-  ArrowRight,
-  CheckCircle2,
-  ListFilter
+  SkipBack
 } from 'lucide-react';
 
 interface GraphNode {
@@ -73,89 +69,45 @@ export const GraphVisualizer: React.FC = () => {
   const [steps, setSteps] = useState<GraphStep[]>([]);
   const [currentStepIdx, setCurrentStepIdx] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [speed, setSpeed] = useState<number>(1000);
+  const [speed, setSpeed] = useState<number>(900);
 
-  // Generate BFS or DFS steps
+  // Compute BFS / DFS traversal steps
   useEffect(() => {
     const generated: GraphStep[] = [];
 
     if (algorithm === 'bfs') {
-      // Breadth-First Search using Queue (FIFO)
+      const visited: string[] = [];
       const queue: string[] = [startNode];
-      const visited: Set<string> = new Set([startNode]);
 
       generated.push({
-        currentNode: startNode,
-        visited: Array.from(visited),
+        currentNode: '',
+        visited: [],
         frontier: [...queue],
-        log: `Starting BFS at vertex ${startNode}. Enqueued ${startNode} into FIFO Queue.`,
+        log: `BFS initialized at starting root vertex ${startNode}. Enqueued to FIFO frontier.`,
       });
 
       while (queue.length > 0) {
         const u = queue.shift()!;
-        generated.push({
-          currentNode: u,
-          visited: Array.from(visited),
-          frontier: [...queue],
-          log: `Dequeued vertex ${u} from front of Queue. Inspecting unvisited neighbors.`,
-        });
+        if (!visited.includes(u)) {
+          visited.push(u);
 
-        const neighbors = adjacencyList[u] || [];
-        for (const v of neighbors) {
-          if (!visited.has(v)) {
-            visited.add(v);
-            queue.push(v);
-            generated.push({
-              currentNode: u,
-              visited: Array.from(visited),
-              frontier: [...queue],
-              activeEdge: { from: u, to: v },
-              log: `Discovered unvisited neighbor ${v}. Marked visited and Enqueued into Queue [${queue.join(', ')}].`,
-            });
-          }
-        }
-      }
-
-      generated.push({
-        currentNode: '',
-        visited: Array.from(visited),
-        frontier: [],
-        log: `BFS traversal finished! Visited all ${visited.size} connected vertices in level-order distance.`,
-      });
-    } else {
-      // Depth-First Search using Call Stack (LIFO)
-      const stack: string[] = [startNode];
-      const visited: Set<string> = new Set();
-
-      generated.push({
-        currentNode: startNode,
-        visited: [],
-        frontier: [...stack],
-        log: `Starting DFS at vertex ${startNode}. Pushed ${startNode} onto Call Stack.`,
-      });
-
-      while (stack.length > 0) {
-        const u = stack.pop()!;
-        if (!visited.has(u)) {
-          visited.add(u);
           generated.push({
             currentNode: u,
-            visited: Array.from(visited),
-            frontier: [...stack],
-            log: `Popped vertex ${u} from Stack. Marked as visited.`,
+            visited: [...visited],
+            frontier: [...queue],
+            log: `Dequeued vertex ${u} from front of queue. Marked as visited. Inspecting adjacent neighbors...`,
           });
 
           const neighbors = adjacencyList[u] || [];
-          // reverse order so first neighbor is popped first
-          for (const v of [...neighbors].reverse()) {
-            if (!visited.has(v)) {
-              stack.push(v);
+          for (const v of neighbors) {
+            if (!visited.includes(v) && !queue.includes(v)) {
+              queue.push(v);
               generated.push({
                 currentNode: u,
-                visited: Array.from(visited),
-                frontier: [...stack],
+                visited: [...visited],
+                frontier: [...queue],
                 activeEdge: { from: u, to: v },
-                log: `Explored edge (${u} ── ${v}). Pushed neighbor ${v} onto Stack [${stack.join(', ')}].`,
+                log: `Discovered unvisited neighbor ${v} along edge (${u} -> ${v}). Enqueued to back of queue.`,
               });
             }
           }
@@ -164,9 +116,55 @@ export const GraphVisualizer: React.FC = () => {
 
       generated.push({
         currentNode: '',
-        visited: Array.from(visited),
+        visited: [...visited],
         frontier: [],
-        log: `DFS traversal complete! All reachable depths explored.`,
+        log: `Breadth-First Search (BFS) complete! All reachable vertices traversed level by level in O(V + E) time.`,
+      });
+    } else {
+      // DFS
+      const visited: string[] = [];
+      const stack: string[] = [startNode];
+
+      generated.push({
+        currentNode: '',
+        visited: [],
+        frontier: [...stack],
+        log: `DFS initialized at starting root vertex ${startNode}. Pushed to LIFO call stack.`,
+      });
+
+      while (stack.length > 0) {
+        const u = stack.pop()!;
+        if (!visited.includes(u)) {
+          visited.push(u);
+
+          generated.push({
+            currentNode: u,
+            visited: [...visited],
+            frontier: [...stack],
+            log: `Popped vertex ${u} from top of stack. Marked as visited. Exploring depth path...`,
+          });
+
+          const neighbors = [...(adjacencyList[u] || [])].reverse();
+          for (const v of neighbors) {
+            if (!visited.includes(v)) {
+              stack.push(v);
+              generated.push({
+                currentNode: u,
+                visited: [...visited],
+                frontier: [...stack],
+                activeEdge: { from: u, to: v },
+                log: `Pushed unvisited neighbor ${v} onto call stack along edge (${u} -> ${v}).`,
+              });
+            }
+          }
+        }
+      }
+
+      generated.push({
+        currentNode: '',
+        visited: [...visited],
+        frontier: [],
+        log: `Depth-First Search (DFS) complete! Backtracking explored all branches in O(V + E) time.`,
       });
     }
 
@@ -175,7 +173,7 @@ export const GraphVisualizer: React.FC = () => {
     setIsPlaying(false);
   }, [algorithm, startNode]);
 
-  // Autoplay handler
+  // Autoplay ticker
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isPlaying) {
@@ -192,78 +190,61 @@ export const GraphVisualizer: React.FC = () => {
     return () => clearInterval(timer);
   }, [isPlaying, steps.length, speed]);
 
-  const activeStep = steps[currentStepIdx] || steps[0] || {
+  const activeStep: GraphStep = steps[currentStepIdx] || {
     currentNode: '',
     visited: [],
     frontier: [],
-    log: 'Graph visualizer ready.',
+    log: 'Graph ready.',
   };
 
   return (
-    <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6 select-none">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-[#2d3036] pb-5">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <Network className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-xl font-bold text-white">Graph Traversal Lab (BFS & DFS)</h2>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-300 border border-indigo-800">
-              {algorithm === 'bfs' ? 'Queue (FIFO) · O(V + E)' : 'Stack (LIFO) · O(V + E)'}
+            <Network className="w-5 h-5 text-red-600" />
+            <h2 className="text-xl font-extrabold text-blue-950">Graph Algorithms Lab (BFS &amp; DFS)</h2>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold">
+              Time: O(V + E) · Vertices: 7 · Edges: 9
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Observe network discovery frontiers, FIFO Queue versus LIFO Call Stack memory, and shortest path level expansion.
+          <p className="text-xs text-blue-900 mt-1 font-medium">
+            Visualize Breadth-First Search (FIFO queue level frontier) and Depth-First Search (LIFO recursion stack).
           </p>
         </div>
 
         {/* Algorithm Switcher */}
-        <div className="flex items-center gap-1.5 bg-[#08090B] p-1 rounded-xl border border-slate-800">
-          {(
-            [
-              { id: 'bfs', label: 'Breadth-First Search (BFS)' },
-              { id: 'dfs', label: 'Depth-First Search (DFS)' },
-            ] as const
-          ).map((m) => (
-            <button
-              key={m.id}
-              onClick={() => setAlgorithm(m.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                algorithm === m.id
-                  ? 'bg-slate-200 text-slate-900 font-bold shadow'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {m.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200">
+          <button
+            onClick={() => setAlgorithm('bfs')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              algorithm === 'bfs'
+                ? 'bg-blue-900 text-white shadow-2xs'
+                : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
+            }`}
+          >
+            BFS (Queue)
+          </button>
+          <button
+            onClick={() => setAlgorithm('dfs')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              algorithm === 'dfs'
+                ? 'bg-blue-900 text-white shadow-2xs'
+                : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
+            }`}
+          >
+            DFS (Stack)
+          </button>
         </div>
       </div>
 
-      {/* Start Node & Control Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#08090B] p-4 rounded-xl border border-slate-800 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-medium">Source Vertex:</span>
-          <div className="flex items-center gap-1">
-            {nodes.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => setStartNode(n.id)}
-                className={`w-7 h-7 rounded-lg font-mono text-xs font-bold border transition-all ${
-                  startNode === n.id
-                    ? 'bg-indigo-600 text-white border-indigo-400 shadow'
-                    : 'bg-[#17191D] border-slate-700 text-slate-300 hover:border-slate-500'
-                }`}
-              >
-                {n.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
+      {/* Stepper Controls Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentStepIdx(0)}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 text-blue-900 border border-slate-200 transition-colors cursor-pointer"
             title="Reset"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -271,13 +252,14 @@ export const GraphVisualizer: React.FC = () => {
           <button
             onClick={() => setCurrentStepIdx((prev) => Math.max(0, prev - 1))}
             disabled={currentStepIdx === 0}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-900 border border-slate-200 transition-colors cursor-pointer"
+            title="Prev"
           >
             <SkipBack className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setIsPlaying((prev) => !prev)}
-            className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-white text-slate-900 font-bold text-xs flex items-center gap-1.5 shadow"
+            className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
             <span>{isPlaying ? 'Pause' : 'Play'}</span>
@@ -285,21 +267,38 @@ export const GraphVisualizer: React.FC = () => {
           <button
             onClick={() => setCurrentStepIdx((prev) => Math.min(steps.length - 1, prev + 1))}
             disabled={currentStepIdx >= steps.length - 1}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-900 border border-slate-200 transition-colors cursor-pointer"
+            title="Next"
           >
             <SkipForward className="w-3.5 h-3.5" />
           </button>
+
+          {/* Start node selector */}
+          <div className="flex items-center gap-1.5 ml-3 pl-3 border-l border-slate-200 font-bold text-blue-950">
+            <span>Root:</span>
+            <select
+              value={startNode}
+              onChange={(e) => setStartNode(e.target.value)}
+              className="px-2 py-0.5 rounded bg-white border border-slate-200 text-blue-950 font-mono font-bold cursor-pointer"
+            >
+              {nodes.map((n) => (
+                <option key={n.id} value={n.id}>
+                  Vertex {n.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="text-xs font-mono text-slate-300">
-          Step <span className="text-white font-bold">{currentStepIdx + 1}</span> of {steps.length}
+        <div className="font-mono text-xs text-blue-900 font-bold">
+          Step <span className="text-red-600 font-extrabold">{currentStepIdx + 1}</span> / {steps.length}
         </div>
       </div>
 
-      {/* Visual Canvas (Graph Network + Memory Queue/Stack) */}
+      {/* Main Graph Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Graph SVG (8 cols) */}
-        <div className="lg:col-span-8 p-6 rounded-2xl bg-[#08090B] border border-slate-800 flex items-center justify-center min-h-[300px]">
+        <div className="lg:col-span-8 p-6 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center min-h-[300px]">
           <svg viewBox="0 0 560 280" className="w-full max-w-[560px] h-[260px] select-none">
             {/* Edges */}
             {edges.map((e) => {
@@ -317,7 +316,7 @@ export const GraphVisualizer: React.FC = () => {
                   y1={fromN.y}
                   x2={toN.x}
                   y2={toN.y}
-                  stroke={isActiveEdge ? '#818cf8' : '#334155'}
+                  stroke={isActiveEdge ? '#DC2626' : '#1E3A8A'}
                   strokeWidth={isActiveEdge ? '3.5' : '2'}
                   className="transition-all duration-300"
                 />
@@ -330,22 +329,22 @@ export const GraphVisualizer: React.FC = () => {
               const isVisited = activeStep.visited.includes(node.id);
               const isFrontier = activeStep.frontier.includes(node.id);
 
-              let fill = '#1e293b';
-              let stroke = '#475569';
-              let textFill = '#cbd5e1';
+              let fill = '#0A192F';
+              let stroke = '#1E3A8A';
+              let textFill = '#FFFFFF';
 
               if (isCurrent) {
-                fill = '#4f46e5';
-                stroke = '#a5b4fc';
-                textFill = '#ffffff';
+                fill = '#DC2626';
+                stroke = '#EF4444';
+                textFill = '#FFFFFF';
               } else if (isVisited) {
-                fill = '#059669';
-                stroke = '#34d399';
-                textFill = '#ecfdf5';
+                fill = '#1E3A8A';
+                stroke = '#3B82F6';
+                textFill = '#FFFFFF';
               } else if (isFrontier) {
-                fill = '#0e7490';
-                stroke = '#22d3ee';
-                textFill = '#cffafe';
+                fill = '#1E40AF';
+                stroke = '#93C5FD';
+                textFill = '#FFFFFF';
               }
 
               return (
@@ -357,7 +356,7 @@ export const GraphVisualizer: React.FC = () => {
                     fill={fill}
                     stroke={stroke}
                     strokeWidth={isCurrent ? '3.5' : '2'}
-                    filter={isCurrent ? 'drop-shadow(0px 0px 10px rgba(99, 102, 241, 0.8))' : undefined}
+                    filter={isCurrent ? 'drop-shadow(0px 0px 8px rgba(220, 38, 38, 0.7))' : undefined}
                   />
                   <text
                     x={node.x}
@@ -379,24 +378,24 @@ export const GraphVisualizer: React.FC = () => {
         {/* Frontier State (Queue / Stack) + Visited Set (4 cols) */}
         <div className="lg:col-span-4 space-y-4">
           {/* Active Memory Structure (Queue / Stack) */}
-          <div className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-2 font-mono text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="font-bold text-slate-300 uppercase">
+          <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2 font-mono text-xs shadow-2xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-extrabold text-blue-950 uppercase">
                 {algorithm === 'bfs' ? 'FIFO Queue' : 'LIFO Stack'}
               </span>
-              <span className="text-[10px] text-indigo-400">
+              <span className="text-[10px] text-red-600 font-bold">
                 {algorithm === 'bfs' ? 'Frontier' : 'Call Stack'}
               </span>
             </div>
 
-            <div className="min-h-[48px] flex items-center gap-1.5 p-2 rounded-lg bg-[#121418] border border-slate-800 overflow-x-auto">
+            <div className="min-h-[48px] flex items-center gap-1.5 p-2 rounded-lg bg-slate-50 border border-slate-200 overflow-x-auto">
               {activeStep.frontier.length === 0 ? (
-                <span className="text-slate-500 text-[11px] italic">Empty</span>
+                <span className="text-blue-900 text-[11px] font-medium italic">Empty</span>
               ) : (
                 activeStep.frontier.map((item, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-md bg-indigo-950/80 text-indigo-200 border border-indigo-700/60 font-bold"
+                    className="px-2.5 py-1 rounded-md bg-blue-900 text-white font-extrabold text-xs shadow-2xs"
                   >
                     {item}
                   </span>
@@ -406,22 +405,22 @@ export const GraphVisualizer: React.FC = () => {
           </div>
 
           {/* Visited Set */}
-          <div className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-2 font-mono text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="font-bold text-slate-300 uppercase">Visited Set</span>
-              <span className="text-[10px] text-emerald-400">
+          <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2 font-mono text-xs shadow-2xs">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="font-extrabold text-blue-950 uppercase">Visited Set</span>
+              <span className="text-[10px] text-blue-900 font-bold">
                 {activeStep.visited.length} / {nodes.length} Vertices
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-lg bg-[#121418] border border-slate-800">
+            <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-lg bg-slate-50 border border-slate-200">
               {activeStep.visited.length === 0 ? (
-                <span className="text-slate-500 text-[11px] italic">None</span>
+                <span className="text-blue-900 text-[11px] font-medium italic">None</span>
               ) : (
                 activeStep.visited.map((v) => (
                   <span
                     key={v}
-                    className="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-700 font-bold"
+                    className="px-2 py-0.5 rounded bg-red-50 text-red-600 border border-red-200 font-extrabold"
                   >
                     {v}
                   </span>
@@ -431,15 +430,15 @@ export const GraphVisualizer: React.FC = () => {
           </div>
 
           {/* Adjacency List Preview */}
-          <div className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-1.5 font-mono text-[11px]">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block">
+          <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-1.5 font-mono text-[11px] shadow-2xs">
+            <span className="text-[10px] text-blue-900 font-extrabold uppercase block">
               Adjacency List:
             </span>
-            <div className="space-y-1 text-slate-400">
+            <div className="space-y-1 text-blue-900">
               {Object.entries(adjacencyList).slice(0, 4).map(([k, neighbors]) => (
                 <div key={k} className="flex gap-2">
-                  <span className="text-white font-bold">{k}:</span>
-                  <span>[{neighbors.join(', ')}]</span>
+                  <span className="text-blue-950 font-extrabold">{k}:</span>
+                  <span className="font-medium">[{neighbors.join(', ')}]</span>
                 </div>
               ))}
             </div>
@@ -448,11 +447,11 @@ export const GraphVisualizer: React.FC = () => {
       </div>
 
       {/* Traversal Log */}
-      <div className="p-4 rounded-xl bg-[#121418] border border-slate-800 space-y-1 font-mono text-xs">
-        <span className="text-[10px] text-slate-400 uppercase block font-bold">
+      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-1 font-mono text-xs">
+        <span className="text-[10px] text-blue-950 uppercase block font-extrabold">
           Traversal Invariant:
         </span>
-        <p className="text-slate-200 leading-relaxed">{activeStep.log}</p>
+        <p className="text-blue-950 leading-relaxed font-medium">{activeStep.log}</p>
       </div>
     </div>
   );

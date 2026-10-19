@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import {
-  User,
-  KeyRound,
   Copy,
   Check,
   Shield,
   Flame,
   Award,
-  Target,
   LogOut,
   X
 } from 'lucide-react';
@@ -61,89 +58,89 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#17191D] border border-slate-700 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6">
+    <div className="fixed inset-0 z-50 bg-blue-950/60 backdrop-blur-xs flex items-center justify-center p-4 select-none">
+      <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-[#2d3036] pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 font-bold font-mono">
+            <div className="w-9 h-9 rounded-xl bg-blue-900 flex items-center justify-center text-white font-bold font-mono shadow-xs">
               {learner.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Learner Profile</h3>
-              <p className="text-xs text-slate-400">Anonymous Zero-Friction Account</p>
+              <h3 className="text-base font-extrabold text-blue-950">Learner Profile</h3>
+              <p className="text-xs text-blue-900 font-medium">Anonymous Zero-Friction Account</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white"
+            className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-blue-900 hover:text-red-600 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Access Code Card */}
-        <div className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-1.5">
+        <div className="p-4 rounded-xl bg-slate-50 border border-blue-200 space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-400 font-mono uppercase text-[10px]">
+            <span className="text-blue-900 font-mono uppercase text-[10px] font-bold">
               Secret Access Code (Cross-Device Recovery)
             </span>
             <button
               onClick={copyCode}
-              className="text-xs font-mono text-slate-300 hover:text-white flex items-center gap-1"
+              className="text-xs font-mono text-blue-900 hover:text-red-600 flex items-center gap-1 font-bold cursor-pointer"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-red-600" /> : <Copy className="w-3.5 h-3.5 text-blue-800" />}
               <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
           </div>
-          <div className="text-base font-mono font-bold text-white tracking-wider">
+          <div className="text-base font-mono font-extrabold text-blue-950 tracking-wider">
             {learner.accessCode}
           </div>
-          <p className="text-[11px] text-slate-500 leading-relaxed">
+          <p className="text-[11px] text-blue-900 leading-relaxed font-medium">
             Save this code to resume your streak and PRI intelligence score from any browser without an email or password.
           </p>
         </div>
 
         {/* Stats Summary */}
         <div className="grid grid-cols-3 gap-2.5 text-center font-mono">
-          <div className="p-3 rounded-xl bg-[#08090B] border border-slate-800">
-            <Flame className="w-4 h-4 text-amber-400 mx-auto mb-1 fill-amber-500/20" />
-            <span className="text-[10px] text-slate-500 uppercase block">Active Streak</span>
-            <span className="text-sm font-bold text-amber-300">{learner.streakCount} Days</span>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <Flame className="w-4 h-4 text-red-600 mx-auto mb-1 fill-red-600" />
+            <span className="text-[10px] text-blue-800 uppercase block font-bold">Active Streak</span>
+            <span className="text-sm font-extrabold text-red-600">{learner.streakCount} Days</span>
           </div>
 
-          <div className="p-3 rounded-xl bg-[#08090B] border border-slate-800">
-            <Shield className="w-4 h-4 text-cyan-400 mx-auto mb-1" />
-            <span className="text-[10px] text-slate-500 uppercase block">Streak Tokens</span>
-            <span className="text-sm font-bold text-cyan-300">{learner.streakProtectionTokens}</span>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <Shield className="w-4 h-4 text-blue-900 mx-auto mb-1" />
+            <span className="text-[10px] text-blue-800 uppercase block font-bold">Streak Tokens</span>
+            <span className="text-sm font-extrabold text-blue-950">{learner.streakProtectionTokens}</span>
           </div>
 
-          <div className="p-3 rounded-xl bg-[#08090B] border border-slate-800">
-            <Award className="w-4 h-4 text-slate-300 mx-auto mb-1" />
-            <span className="text-[10px] text-slate-500 uppercase block">Bonus Points</span>
-            <span className="text-sm font-bold text-white">{learner.bonusPoints || 100}</span>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <Award className="w-4 h-4 text-blue-900 mx-auto mb-1" />
+            <span className="text-[10px] text-blue-800 uppercase block font-bold">Bonus Points</span>
+            <span className="text-sm font-extrabold text-blue-950">{learner.bonusPoints || 100}</span>
           </div>
         </div>
 
         {/* Editable Form */}
         <form onSubmit={handleSave} className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-300 font-semibold mb-1">Learner Name</label>
+            <label className="block text-blue-950 font-bold mb-1">Learner Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-[#08090B] border border-slate-700 text-white focus:outline-none focus:border-slate-300"
+              className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-blue-950 font-medium focus:outline-none focus:border-blue-400"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Level</label>
+              <label className="block text-blue-950 font-bold mb-1">Level</label>
               <select
                 value={level}
                 onChange={(e) => setLevel(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-[#08090B] border border-slate-700 text-white"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-blue-950 font-semibold"
               >
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
@@ -152,11 +149,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1">Target Track</label>
+              <label className="block text-blue-950 font-bold mb-1">Target Track</label>
               <select
                 value={target}
                 onChange={(e) => setTarget(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-[#08090B] border border-slate-700 text-white"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-blue-950 font-semibold"
               >
                 <option value="Campus Placement">Campus Placement</option>
                 <option value="Product-Based Companies">Product Companies</option>
@@ -167,7 +164,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           </div>
 
           {savedSuccess && (
-            <p className="text-xs text-emerald-400 font-mono text-center">
+            <p className="text-xs text-blue-900 font-mono text-center font-bold">
               ✓ Profile settings saved successfully!
             </p>
           )}
@@ -176,7 +173,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             <button
               type="button"
               onClick={onSwitchAccount}
-              className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-mono"
+              className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-mono font-bold cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Switch Profile</span>
@@ -184,7 +181,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-white text-slate-900 font-bold text-xs uppercase"
+              className="px-5 py-2.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs uppercase cursor-pointer shadow-xs transition-colors"
             >
               Save Changes
             </button>

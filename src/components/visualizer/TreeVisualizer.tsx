@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   GitFork,
-  Play,
   RotateCcw,
   Plus,
   Trash2,
   Search,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  Layers,
   ArrowRight
 } from 'lucide-react';
 
@@ -59,198 +54,200 @@ export const TreeVisualizer: React.FC = () => {
       return root;
     };
 
-    let rawRoot: RawNode | undefined = undefined;
+    let rootRaw: RawNode | undefined;
     vals.forEach((v) => {
-      rawRoot = insertRaw(rawRoot, v);
+      rootRaw = insertRaw(rootRaw, v);
     });
 
-    // Assign visual coordinates based on level and position
-    const assignCoordinates = (
+    if (!rootRaw) return null;
+
+    // Position coordinates
+    const assignCoords = (
       node: RawNode | undefined,
-      x: number,
-      y: number,
-      spread: number
+      depth: number,
+      minX: number,
+      maxX: number
     ): TreeNode | undefined => {
       if (!node) return undefined;
-      return {
+
+      const midX = (minX + maxX) / 2;
+      const y = 45 + depth * 65;
+
+      const treeNode: TreeNode = {
         id: `node-${node.val}`,
         val: node.val,
-        x,
-        y,
-        left: assignCoordinates(node.left, x - spread, y + 68, Math.max(28, spread / 1.85)),
-        right: assignCoordinates(node.right, x + spread, y + 68, Math.max(28, spread / 1.85)),
+        x: midX,
+        y: y,
       };
+
+      treeNode.left = assignCoords(node.left, depth + 1, minX, midX);
+      treeNode.right = assignCoords(node.right, depth + 1, midX, maxX);
+
+      return treeNode;
     };
 
-    return assignCoordinates(rawRoot, 340, 45, 130) || null;
+    return assignCoords(rootRaw, 0, 40, 640) || null;
   };
 
   const bstRoot = buildBST(nodeValues);
 
-  // Collect all edges for SVG rendering
-  const collectEdges = (
-    node: TreeNode | null,
-    edges: { x1: number; y1: number; x2: number; y2: number; key: string }[] = []
-  ) => {
-    if (!node) return edges;
-    if (node.left) {
-      edges.push({
-        x1: node.x,
-        y1: node.y,
-        x2: node.left.x,
-        y2: node.left.y,
-        key: `${node.val}-${node.left.val}`,
-      });
-      collectEdges(node.left, edges);
-    }
-    if (node.right) {
-      edges.push({
-        x1: node.x,
-        y1: node.right.y ? node.right.y : node.y + 68,
-        x2: node.right.x,
-        y2: node.right.y,
-        key: `${node.val}-${node.right.val}`,
-      });
-      collectEdges(node.right, edges);
-    }
-    return edges;
+  // Flatten tree for SVG rendering
+  const flattenTree = (root: TreeNode | null): { nodes: TreeNode[]; edges: { x1: number; y1: number; x2: number; y2: number; key: string }[] } => {
+    const nodes: TreeNode[] = [];
+    const edges: { x1: number; y1: number; x2: number; y2: number; key: string }[] = [];
+
+    const traverse = (node?: TreeNode) => {
+      if (!node) return;
+      nodes.push(node);
+
+      if (node.left) {
+        edges.push({
+          x1: node.x,
+          y1: node.y,
+          x2: node.left.x,
+          y2: node.left.y,
+          key: `edge-${node.val}-${node.left.val}`,
+        });
+        traverse(node.left);
+      }
+
+      if (node.right) {
+        edges.push({
+          x1: node.x,
+          y1: node.y,
+          x2: node.right.x,
+          y2: node.right.y,
+          key: `edge-${node.val}-${node.right.val}`,
+        });
+        traverse(node.right);
+      }
+    };
+
+    traverse(root || undefined);
+    return { nodes, edges };
   };
 
-  const edges = collectEdges(bstRoot);
+  const { nodes: flatNodes, edges } = flattenTree(bstRoot);
 
-  // Collect all nodes into a flat array for rendering
-  const flattenNodes = (node: TreeNode | null, list: TreeNode[] = []): TreeNode[] => {
-    if (!node) return list;
-    list.push(node);
-    if (node.left) flattenNodes(node.left, list);
-    if (node.right) flattenNodes(node.right, list);
-    return list;
-  };
-
-  const flatNodes = flattenNodes(bstRoot);
-
-  // Operations
+  // Tree Insert Operation
   const handleInsert = () => {
-    const v = parseInt(inputVal, 10);
-    if (isNaN(v)) return;
-    if (nodeValues.includes(v)) {
-      setStatusLog(`Value ${v} already exists in the BST! BST requires unique keys.`);
-      setActiveHighlightId(v);
-      return;
-    }
-    if (nodeValues.length >= 15) {
-      setStatusLog('Maximum visual tree limit (15 nodes) reached.');
+    const val = parseInt(inputVal, 10);
+    if (isNaN(val)) return;
+
+    if (nodeValues.includes(val)) {
+      setStatusLog(`Value ${val} already exists in BST (no duplicate keys allowed).`);
       return;
     }
 
-    // Trace path
+    if (nodeValues.length >= 15) {
+      setStatusLog('Maximum node capacity reached for clear hierarchical canvas.');
+      return;
+    }
+
+    // Step-by-step search animation before insert
     const path: number[] = [];
-    let cur = bstRoot;
-    while (cur) {
-      path.push(cur.val);
-      if (v < cur.val) cur = cur.left || null;
-      else cur = cur.right || null;
+    let curr: TreeNode | null | undefined = bstRoot;
+
+    while (curr) {
+      path.push(curr.val);
+      if (val < curr.val) curr = curr.left;
+      else curr = curr.right;
     }
 
     setHighlightPath(path);
-    setNodeValues([...nodeValues, v]);
-    setActiveHighlightId(v);
-    setStatusLog(
-      `Inserted ${v} into BST! Traversed path: [${path.join(' → ')}] → new leaf node created.`
-    );
+    setActiveHighlightId(val);
+    setStatusLog(`Searching insert location for ${val}: traversed path [${path.join(' -> ')}]. Inserting leaf...`);
+
+    setTimeout(() => {
+      setNodeValues((prev) => [...prev, val]);
+      setHighlightPath([]);
+      setActiveHighlightId(null);
+      setStatusLog(`Inserted node ${val} into BST according to binary search invariant.`);
+    }, 1200);
   };
 
+  // Search Operation
   const handleSearch = () => {
-    const v = parseInt(inputVal, 10);
-    if (isNaN(v)) return;
+    const target = parseInt(inputVal, 10);
+    if (isNaN(target)) return;
 
     const path: number[] = [];
-    let cur = bstRoot;
+    let curr: TreeNode | null | undefined = bstRoot;
     let found = false;
 
-    while (cur) {
-      path.push(cur.val);
-      if (cur.val === v) {
+    while (curr) {
+      path.push(curr.val);
+      if (curr.val === target) {
         found = true;
         break;
-      } else if (v < cur.val) {
-        cur = cur.left || null;
+      } else if (target < curr.val) {
+        curr = curr.left;
       } else {
-        cur = cur.right || null;
+        curr = curr.right;
       }
     }
 
     setHighlightPath(path);
     if (found) {
-      setActiveHighlightId(v);
-      setStatusLog(`Found key ${v} in BST! Traversal depth: ${path.length} hops [${path.join(' → ')}].`);
+      setActiveHighlightId(target);
+      setStatusLog(`Target ${target} found! Traversed path [${path.join(' -> ')}] in O(log N) comparisons.`);
     } else {
       setActiveHighlightId(null);
-      setStatusLog(`Key ${v} not found in BST. Reached null leaf along path [${path.join(' → ')}].`);
+      setStatusLog(`Target ${target} does not exist in BST. Reached null leaf along path [${path.join(' -> ')}].`);
     }
   };
 
+  // Delete Operation
   const handleDelete = () => {
-    const v = parseInt(inputVal, 10);
-    if (isNaN(v)) return;
-    if (!nodeValues.includes(v)) {
-      setStatusLog(`Cannot delete: ${v} does not exist in the BST.`);
+    const target = parseInt(inputVal, 10);
+    if (isNaN(target)) return;
+
+    if (!nodeValues.includes(target)) {
+      setStatusLog(`Cannot delete ${target}: node not present in tree.`);
       return;
     }
-    if (nodeValues.length <= 1) {
-      setStatusLog('Tree must contain at least 1 node.');
-      return;
-    }
-    setNodeValues(nodeValues.filter((n) => n !== v));
+
+    setNodeValues((prev) => prev.filter((v) => v !== target));
     setActiveHighlightId(null);
     setHighlightPath([]);
-    setStatusLog(`Deleted node ${v} from BST. Subtree re-balanced.`);
+    setStatusLog(`Deleted node ${target}. BST restructured preserving left < root < right invariant.`);
   };
 
-  const handleReset = () => {
-    setNodeValues([50, 30, 70, 20, 40, 60, 80]);
-    setActiveHighlightId(null);
-    setHighlightPath([]);
-    setVisitedNodes([]);
-    setTraversalOutput([]);
-    setStatusLog('Reset to default balanced Binary Search Tree.');
-  };
-
-  // Traversal Animations
+  // Traversals
   const startTraversal = (type: TraversalType) => {
-    if (isTraversing) return;
-    setActiveTraversalType(type);
+    if (isTraversing || !bstRoot) return;
+
     setIsTraversing(true);
+    setActiveTraversalType(type);
     setVisitedNodes([]);
     setTraversalOutput([]);
+    setHighlightPath([]);
 
     const sequence: number[] = [];
 
-    // Helper functions for traversals
-    const inorder = (node: TreeNode | null) => {
+    const inorder = (node?: TreeNode) => {
       if (!node) return;
-      inorder(node.left || null);
+      inorder(node.left);
       sequence.push(node.val);
-      inorder(node.right || null);
+      inorder(node.right);
     };
 
-    const preorder = (node: TreeNode | null) => {
+    const preorder = (node?: TreeNode) => {
       if (!node) return;
       sequence.push(node.val);
-      preorder(node.left || null);
-      preorder(node.right || null);
+      preorder(node.left);
+      preorder(node.right);
     };
 
-    const postorder = (node: TreeNode | null) => {
+    const postorder = (node?: TreeNode) => {
       if (!node) return;
-      postorder(node.left || null);
-      postorder(node.right || null);
+      postorder(node.left);
+      postorder(node.right);
       sequence.push(node.val);
     };
 
-    const levelorder = (root: TreeNode | null) => {
-      if (!root) return;
-      const q: TreeNode[] = [root];
+    const levelorder = (rootNode: TreeNode) => {
+      const q: TreeNode[] = [rootNode];
       while (q.length > 0) {
         const curr = q.shift()!;
         sequence.push(curr.val);
@@ -264,45 +261,54 @@ export const TreeVisualizer: React.FC = () => {
     else if (type === 'postorder') postorder(bstRoot);
     else if (type === 'levelorder') levelorder(bstRoot);
 
-    setStatusLog(`Running ${type.toUpperCase()} traversal across ${sequence.length} nodes...`);
+    setStatusLog(`Running ${type.toUpperCase()} traversal...`);
 
-    let idx = 0;
+    // Step-by-step playback
+    let step = 0;
     const interval = setInterval(() => {
-      if (idx >= sequence.length) {
+      if (step < sequence.length) {
+        const val = sequence[step];
+        setActiveHighlightId(val);
+        setVisitedNodes((prev) => [...prev, val]);
+        setTraversalOutput((prev) => [...prev, val]);
+        step++;
+      } else {
         clearInterval(interval);
         setIsTraversing(false);
-        setStatusLog(
-          `${type.toUpperCase()} traversal complete! Order: [${sequence.join(', ')}]`
-        );
-        return;
+        setActiveHighlightId(null);
+        setStatusLog(`${type.toUpperCase()} completed: [${sequence.join(', ')}].`);
       }
-      const currentVal = sequence[idx];
-      setActiveHighlightId(currentVal);
-      setVisitedNodes((prev) => [...prev, currentVal]);
-      setTraversalOutput((prev) => [...prev, currentVal]);
-      idx++;
-    }, 700);
+    }, 600);
+  };
+
+  const handleReset = () => {
+    setNodeValues([50, 30, 70, 20, 40, 60, 80]);
+    setActiveHighlightId(null);
+    setHighlightPath([]);
+    setVisitedNodes([]);
+    setTraversalOutput([]);
+    setStatusLog('Reset to default 7-node balanced BST.');
   };
 
   return (
-    <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6 select-none">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-[#2d3036] pb-5">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <GitFork className="w-5 h-5 text-emerald-400" />
-            <h2 className="text-xl font-bold text-white">Binary Search Tree (BST) Studio</h2>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 border border-emerald-800">
-              Left &lt; Root &lt; Right
+            <GitFork className="w-5 h-5 text-red-600" />
+            <h2 className="text-xl font-extrabold text-blue-950">Binary Search Tree (BST) Studio</h2>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold">
+              Height: ~{Math.ceil(Math.log2(nodeValues.length + 1))} · Nodes: {nodeValues.length}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-blue-900 mt-1 font-medium">
             Explore hierarchical binary trees: dynamic insertions, binary search pathing, and recursive traversals.
           </p>
         </div>
 
         {/* Tree Traversal Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-[#08090B] p-1 rounded-xl border border-slate-800">
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200">
           {(
             [
               { id: 'inorder', label: 'In-Order (Sorted)' },
@@ -315,10 +321,10 @@ export const TreeVisualizer: React.FC = () => {
               key={t.id}
               onClick={() => startTraversal(t.id)}
               disabled={isTraversing}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTraversalType === t.id && isTraversing
-                  ? 'bg-emerald-400 text-slate-900 font-bold shadow'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'bg-red-600 text-white shadow-2xs'
+                  : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
               }`}
             >
               {t.label}
@@ -328,19 +334,19 @@ export const TreeVisualizer: React.FC = () => {
       </div>
 
       {/* Action Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#08090B] p-4 rounded-xl border border-slate-800 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-medium">Node Value:</span>
+          <span className="text-blue-950 font-bold">Node Value:</span>
           <input
             type="number"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            className="w-20 px-3 py-1.5 rounded-lg bg-[#17191D] border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-emerald-400"
+            className="w-20 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-blue-950 font-mono text-xs font-bold focus:outline-none focus:border-blue-400"
           />
           <button
             onClick={handleInsert}
             disabled={isTraversing}
-            className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1"
+            className="px-3.5 py-1.5 rounded-lg bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Insert</span>
@@ -348,15 +354,15 @@ export const TreeVisualizer: React.FC = () => {
           <button
             onClick={handleSearch}
             disabled={isTraversing}
-            className="px-3.5 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 font-semibold text-xs flex items-center gap-1"
+            className="px-3.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-950 border border-blue-200 font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
           >
-            <Search className="w-3.5 h-3.5" />
+            <Search className="w-3.5 h-3.5 text-blue-900" />
             <span>Search</span>
           </button>
           <button
             onClick={handleDelete}
             disabled={isTraversing}
-            className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 font-medium text-xs flex items-center gap-1"
+            className="px-3.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Delete</span>
@@ -366,15 +372,15 @@ export const TreeVisualizer: React.FC = () => {
         <button
           onClick={handleReset}
           disabled={isTraversing}
-          className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1.5"
+          className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-blue-900 border border-slate-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCcw className="w-3.5 h-3.5 text-blue-800" />
           <span>Reset Default Tree</span>
         </button>
       </div>
 
       {/* SVG Canvas Tree Diagram */}
-      <div className="p-6 rounded-2xl bg-[#08090B] border border-slate-800 overflow-x-auto min-h-[340px] flex flex-col items-center justify-center relative">
+      <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 overflow-x-auto min-h-[340px] flex flex-col items-center justify-center relative">
         <svg
           viewBox="0 0 680 320"
           className="w-full max-w-[680px] h-[300px] select-none"
@@ -396,7 +402,7 @@ export const TreeVisualizer: React.FC = () => {
                 y1={edge.y1}
                 x2={edge.x2}
                 y2={edge.y2}
-                stroke={isHighlightedEdge ? '#22d3ee' : '#334155'}
+                stroke={isHighlightedEdge ? '#DC2626' : '#1E3A8A'}
                 strokeWidth={isHighlightedEdge ? '3' : '2'}
                 strokeDasharray={isHighlightedEdge ? '4 2' : 'none'}
                 className="transition-all duration-300"
@@ -410,22 +416,22 @@ export const TreeVisualizer: React.FC = () => {
             const isInPath = highlightPath.includes(node.val);
             const isVisited = visitedNodes.includes(node.val);
 
-            let circleFill = '#1e293b';
-            let circleStroke = '#475569';
-            let textFill = '#e2e8f0';
+            let circleFill = '#0A192F';
+            let circleStroke = '#1E3A8A';
+            let textFill = '#FFFFFF';
 
             if (isTarget) {
-              circleFill = '#059669';
-              circleStroke = '#34d399';
-              textFill = '#ffffff';
+              circleFill = '#DC2626';
+              circleStroke = '#EF4444';
+              textFill = '#FFFFFF';
             } else if (isVisited) {
-              circleFill = '#065f46';
-              circleStroke = '#10b981';
-              textFill = '#a7f3d0';
+              circleFill = '#1E3A8A';
+              circleStroke = '#2563EB';
+              textFill = '#FFFFFF';
             } else if (isInPath) {
-              circleFill = '#0e7490';
-              circleStroke = '#22d3ee';
-              textFill = '#cffafe';
+              circleFill = '#B91C1C';
+              circleStroke = '#DC2626';
+              textFill = '#FFFFFF';
             }
 
             return (
@@ -437,7 +443,7 @@ export const TreeVisualizer: React.FC = () => {
                   fill={circleFill}
                   stroke={circleStroke}
                   strokeWidth={isTarget || isInPath ? '3' : '2'}
-                  filter={isTarget ? 'drop-shadow(0px 0px 8px rgba(52, 211, 153, 0.7))' : undefined}
+                  filter={isTarget ? 'drop-shadow(0px 0px 8px rgba(220, 38, 38, 0.6))' : undefined}
                 />
                 <text
                   x={node.x}
@@ -457,18 +463,18 @@ export const TreeVisualizer: React.FC = () => {
 
         {/* Real-time Traversal Output Banner */}
         {traversalOutput.length > 0 && (
-          <div className="w-full mt-4 p-3 rounded-xl bg-[#121418] border border-emerald-500/30 flex items-center gap-2 overflow-x-auto text-xs font-mono">
-            <span className="text-emerald-400 font-bold shrink-0">
+          <div className="w-full mt-4 p-3 rounded-xl bg-white border border-blue-200 flex items-center gap-2 overflow-x-auto text-xs font-mono shadow-2xs">
+            <span className="text-red-600 font-extrabold shrink-0">
               {activeTraversalType.toUpperCase()} SEQUENCE:
             </span>
             <div className="flex items-center gap-1.5">
               {traversalOutput.map((val, idx) => (
                 <React.Fragment key={idx}>
-                  <span className="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-200 border border-emerald-700/50 font-bold">
+                  <span className="px-2 py-0.5 rounded bg-blue-900 text-white font-bold">
                     {val}
                   </span>
                   {idx < traversalOutput.length - 1 && (
-                    <ArrowRight className="w-3 h-3 text-slate-600 shrink-0" />
+                    <ArrowRight className="w-3 h-3 text-red-600 shrink-0" />
                   )}
                 </React.Fragment>
               ))}
@@ -478,11 +484,11 @@ export const TreeVisualizer: React.FC = () => {
       </div>
 
       {/* Log message */}
-      <div className="p-4 rounded-xl bg-[#121418] border border-slate-800 space-y-1 font-mono text-xs">
-        <span className="text-[10px] text-slate-400 uppercase block font-bold">
+      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-1 font-mono text-xs">
+        <span className="text-[10px] text-blue-950 uppercase block font-extrabold">
           Tree Invariant Log:
         </span>
-        <p className="text-slate-200 leading-relaxed">{statusLog}</p>
+        <p className="text-blue-950 leading-relaxed font-medium">{statusLog}</p>
       </div>
     </div>
   );

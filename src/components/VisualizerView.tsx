@@ -133,44 +133,44 @@ export const VisualizerView: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 select-none">
       {/* Studio Header Banner */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm relative overflow-hidden">
         <div className="space-y-2 relative z-10">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase">
+            <span className="text-xs font-mono font-extrabold tracking-widest text-red-600 uppercase">
               STUDIO LABORATORY
             </span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
               Interactive Cognitive Engine
             </span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800">
+            <span className="text-[11px] font-mono font-extrabold px-2 py-0.5 rounded bg-red-50 text-red-600 border border-red-200">
               8 Full Visualizers
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Data Structure & Algorithm Visualizer Studio
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-950 tracking-tight">
+            Data Structure &amp; Algorithm Visualizer Studio
           </h1>
-          <p className="text-xs sm:text-sm text-[#BFC2C9] max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-blue-900/80 max-w-2xl leading-relaxed">
             Turn abstract code into visual step movements. Inspect runtime memory, pointer shifts, and algorithm invariants rather than just watching a passive animation.
           </p>
         </div>
 
-        <div className="hidden lg:flex items-center gap-3 bg-[#08090B]/80 backdrop-blur-md p-4 rounded-xl border border-slate-800 text-xs font-mono text-slate-300">
+        <div className="hidden lg:flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs font-mono text-blue-950">
           <div className="text-right">
-            <span className="text-slate-500 block text-[10px]">COVERAGE</span>
-            <span className="text-emerald-400 font-bold">100% Industry DSA</span>
+            <span className="text-blue-800/80 block text-[10px] font-semibold">COVERAGE</span>
+            <span className="text-red-600 font-extrabold">100% Industry DSA</span>
           </div>
-          <div className="h-8 w-px bg-slate-800" />
+          <div className="h-8 w-px bg-slate-200" />
           <div className="text-right">
-            <span className="text-slate-500 block text-[10px]">MODES</span>
-            <span className="text-white font-bold">Step & Autoplay</span>
+            <span className="text-blue-800/80 block text-[10px] font-semibold">MODES</span>
+            <span className="text-blue-950 font-extrabold">Step &amp; Autoplay</span>
           </div>
         </div>
       </div>
 
       {/* Main Category Navigation Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 bg-[#08090B] p-2 rounded-2xl border border-slate-800 shadow-lg">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-xs">
         {visualizerTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -179,23 +179,23 @@ export const VisualizerView: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center text-center p-3 rounded-xl transition-all duration-200 relative group ${
+              className={`flex flex-col items-center justify-center text-center p-3 rounded-xl transition-all duration-200 relative group cursor-pointer ${
                 isActive
-                  ? 'bg-slate-200 text-slate-900 font-bold shadow-lg shadow-white/5 ring-1 ring-white/30 scale-[1.02]'
-                  : 'bg-[#121418] text-slate-400 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-slate-700'
+                  ? 'bg-blue-950 text-white font-bold shadow-xs ring-1 ring-blue-900 scale-[1.02]'
+                  : 'bg-slate-50 text-blue-900/80 hover:text-blue-950 hover:bg-blue-50/60 border border-slate-200'
               }`}
             >
               <Icon
                 className={`w-5 h-5 mb-1.5 transition-transform group-hover:scale-110 ${
-                  isActive ? 'text-slate-900' : 'text-slate-400 group-hover:text-emerald-400'
+                  isActive ? 'text-red-400' : 'text-blue-900 group-hover:text-red-600'
                 }`}
               />
-              <span className="text-xs font-semibold leading-tight line-clamp-1">{tab.label}</span>
+              <span className="text-xs font-bold leading-tight line-clamp-1">{tab.label}</span>
               <span
-                className={`text-[9px] font-mono mt-1 px-1.5 py-0.5 rounded transition-colors ${
+                className={`text-[9px] font-mono mt-1 px-1.5 py-0.5 rounded transition-colors font-bold ${
                   isActive
-                    ? 'bg-slate-900 text-white font-medium'
-                    : 'bg-slate-900/60 text-slate-500 group-hover:text-slate-300'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-white text-blue-900 border border-slate-200'
                 }`}
               >
                 {tab.badge}
@@ -226,14 +226,14 @@ export const VisualizerView: React.FC = () => {
           MODULE 8: CODE TRACING LAB
           ========================================================================= */}
       {activeTab === 'code_trace' && (
-        <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#2d3036] pb-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
             <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-slate-300" />
+              <h2 className="text-lg font-extrabold text-blue-950 flex items-center gap-2">
+                <Code2 className="w-4 h-4 text-red-600" />
                 Line-by-Line Code Tracing Lab
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-blue-900/80 mt-0.5">
                 Step through iterative loop execution with live variable state inspection and output console.
               </p>
             </div>
@@ -241,21 +241,21 @@ export const VisualizerView: React.FC = () => {
             <div className="flex items-center gap-2 font-mono text-xs">
               <button
                 onClick={() => setTraceStepIdx(0)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-blue-950 border border-slate-200 font-bold cursor-pointer"
               >
                 Reset
               </button>
               <button
                 onClick={() => setTraceStepIdx((prev) => Math.max(0, prev - 1))}
                 disabled={traceStepIdx === 0}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 border border-slate-700"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-blue-950 border border-slate-200 font-bold cursor-pointer"
               >
                 Prev
               </button>
               <button
                 onClick={() => setTraceStepIdx((prev) => Math.min(traceSteps.length - 1, prev + 1))}
                 disabled={traceStepIdx >= traceSteps.length - 1}
-                className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-white text-slate-900 font-bold shadow"
+                className="px-4 py-1.5 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold shadow-xs cursor-pointer"
               >
                 Next Step
               </button>
@@ -264,8 +264,8 @@ export const VisualizerView: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Code Editor Preview (7 cols) */}
-            <div className="lg:col-span-7 bg-[#08090B] border border-slate-800 rounded-xl p-4 font-mono text-xs overflow-x-auto space-y-1">
-              <div className="text-[10px] text-slate-500 uppercase pb-2 border-b border-slate-800">
+            <div className="lg:col-span-7 bg-slate-50 border border-slate-200 rounded-2xl p-4 font-mono text-xs overflow-x-auto space-y-1">
+              <div className="text-[10px] text-blue-800 font-bold uppercase pb-2 border-b border-slate-200">
                 Source: OddNumbersSum.java
               </div>
               {codeLines.map((l) => {
@@ -273,13 +273,13 @@ export const VisualizerView: React.FC = () => {
                 return (
                   <div
                     key={l.line}
-                    className={`flex items-center gap-3 px-2 py-1 rounded transition-colors ${
+                    className={`flex items-center gap-3 px-2 py-1.5 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-slate-800 text-white font-bold border-l-2 border-cyan-400 pl-3'
-                        : 'text-slate-400'
+                        ? 'bg-blue-100 text-blue-950 font-bold border-l-4 border-red-600 pl-3'
+                        : 'text-blue-900/80'
                     }`}
                   >
-                    <span className="w-5 text-right text-slate-600 select-none">{l.line}</span>
+                    <span className="w-5 text-right text-blue-800/60 select-none font-bold">{l.line}</span>
                     <pre className="text-xs">{l.text}</pre>
                   </div>
                 );
@@ -289,28 +289,28 @@ export const VisualizerView: React.FC = () => {
             {/* Live Variable Watch Table & Output (5 cols) */}
             <div className="lg:col-span-5 space-y-4">
               {/* Watch Table */}
-              <div className="bg-[#08090B] border border-slate-800 rounded-xl p-4 space-y-3">
-                <div className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-2">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                <div className="text-xs font-mono font-bold text-blue-950 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-2">
                   <span>Variable Watch Table</span>
-                  <span className="text-[10px] text-emerald-400">Stack Scope</span>
+                  <span className="text-[10px] text-red-600 font-bold">Stack Scope</span>
                 </div>
 
                 <div className="space-y-2 font-mono text-xs">
                   {Object.entries(activeTrace.vars).map(([k, v]) => (
-                    <div key={k} className="flex items-center justify-between p-2 rounded bg-[#121418] border border-slate-800">
-                      <span className="text-slate-400 font-medium">{k}</span>
-                      <span className="text-cyan-300 font-bold">{String(v)}</span>
+                    <div key={k} className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-blue-900 font-semibold">{k}</span>
+                      <span className="text-red-600 font-extrabold">{String(v)}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Step Explanation */}
-              <div className="bg-[#121418] border border-slate-700 rounded-xl p-4 space-y-1.5 font-mono text-xs">
-                <span className="text-[10px] text-slate-400 uppercase block font-bold">
+              <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-4 space-y-1.5 font-mono text-xs">
+                <span className="text-[10px] text-blue-950 uppercase block font-extrabold">
                   Runtime Step Explanation:
                 </span>
-                <p className="text-slate-200 leading-relaxed">{activeTrace.desc}</p>
+                <p className="text-blue-900 leading-relaxed font-medium">{activeTrace.desc}</p>
               </div>
             </div>
           </div>

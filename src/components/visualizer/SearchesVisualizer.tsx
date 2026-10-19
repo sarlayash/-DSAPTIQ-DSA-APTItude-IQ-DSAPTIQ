@@ -291,24 +291,24 @@ export const SearchesVisualizer: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 select-none">
       {/* Header & Algorithm Selection */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-[#2d3036] pb-5">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <Search className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-xl font-bold text-white">Searches Studio</h2>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800">
+            <Search className="w-5 h-5 text-blue-950" />
+            <h2 className="text-xl font-extrabold text-blue-950">Searches Studio</h2>
+            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
               {algorithm === 'binary' ? 'O(log N)' : algorithm === 'linear' ? 'O(N)' : 'O(√N)'}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-blue-900/80 mt-1">
             Compare algorithmic search patterns: divide-and-conquer binary halving, sequential linear traversal, and block jump search.
           </p>
         </div>
 
         {/* Algorithm Tabs */}
-        <div className="flex items-center gap-1.5 bg-[#08090B] p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
           {(
             [
               { id: 'binary', label: 'Binary Search', complexity: 'O(log N)' },
@@ -319,10 +319,10 @@ export const SearchesVisualizer: React.FC = () => {
             <button
               key={m.id}
               onClick={() => setAlgorithm(m.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 algorithm === m.id
-                  ? 'bg-slate-200 text-slate-900 font-bold shadow'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-950 text-white shadow-xs'
+                  : 'text-blue-900/80 hover:text-blue-950'
               }`}
             >
               {m.label}
@@ -332,20 +332,20 @@ export const SearchesVisualizer: React.FC = () => {
       </div>
 
       {/* Target & Array Configuration */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-[#08090B] p-4 rounded-xl border border-slate-800 text-xs">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
         {/* Target input */}
         <div className="md:col-span-4 flex items-center gap-2">
-          <span className="text-slate-400 font-medium shrink-0">Search Target:</span>
+          <span className="text-blue-950 font-bold shrink-0">Target:</span>
           <input
             type="number"
             value={customTargetInput}
             onChange={(e) => setCustomTargetInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleApplyCustomTarget()}
-            className="w-20 px-3 py-1.5 rounded-lg bg-[#17191D] border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-cyan-400"
+            className="w-20 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-blue-950 font-mono text-xs font-bold focus:outline-none focus:border-blue-900"
           />
           <button
             onClick={handleApplyCustomTarget}
-            className="px-3 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 font-semibold text-xs"
+            className="px-3 py-1.5 rounded-lg bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs shadow-xs cursor-pointer"
           >
             Set
           </button>
@@ -357,10 +357,10 @@ export const SearchesVisualizer: React.FC = () => {
                   setCustomTargetInput(String(val));
                   setTarget(val);
                 }}
-                className={`px-2 py-1 rounded text-[11px] font-mono border ${
+                className={`px-2 py-1 rounded text-[11px] font-mono border cursor-pointer ${
                   target === val
-                    ? 'bg-slate-200 text-slate-900 border-white font-bold'
-                    : 'bg-[#121418] border-slate-800 text-slate-400 hover:text-slate-200'
+                    ? 'bg-red-600 text-white border-red-600 font-bold'
+                    : 'bg-white border-slate-200 text-blue-900 hover:border-blue-400'
                 }`}
               >
                 {val}
@@ -371,20 +371,20 @@ export const SearchesVisualizer: React.FC = () => {
 
         {/* Array values input */}
         <div className="md:col-span-8 flex items-center gap-2">
-          <span className="text-slate-400 font-medium shrink-0">Array:</span>
+          <span className="text-blue-950 font-bold shrink-0">Array:</span>
           <input
             type="text"
             value={arrayStr}
             onChange={(e) => setArrayStr(e.target.value)}
             placeholder="comma-separated numbers"
-            className="flex-1 px-3 py-1.5 rounded-lg bg-[#17191D] border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-cyan-400"
+            className="flex-1 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-blue-950 font-mono text-xs font-medium focus:outline-none focus:border-blue-900"
           />
           <button
             onClick={() => {
               const def = '3, 8, 14, 21, 29, 35, 42, 57, 68, 79, 88, 95';
               setArrayStr(def);
             }}
-            className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs shrink-0"
+            className="px-2.5 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-blue-950 text-xs font-bold shrink-0 cursor-pointer"
           >
             Preset
           </button>
@@ -392,11 +392,11 @@ export const SearchesVisualizer: React.FC = () => {
       </div>
 
       {/* Stepper Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#08090B] p-3 rounded-xl border border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentStepIdx(0)}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 text-blue-950 border border-slate-200 text-xs transition-colors cursor-pointer"
             title="Reset to beginning"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -404,14 +404,14 @@ export const SearchesVisualizer: React.FC = () => {
           <button
             onClick={() => setCurrentStepIdx((prev) => Math.max(0, prev - 1))}
             disabled={currentStepIdx === 0}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs transition-colors"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-950 border border-slate-200 text-xs transition-colors cursor-pointer"
             title="Previous step"
           >
             <SkipBack className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setIsPlaying((prev) => !prev)}
-            className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-white text-slate-900 font-bold text-xs flex items-center gap-1.5 shadow"
+            className="px-4 py-1.5 rounded-lg bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
             <span>{isPlaying ? 'Pause' : 'Play'}</span>
@@ -419,15 +419,15 @@ export const SearchesVisualizer: React.FC = () => {
           <button
             onClick={() => setCurrentStepIdx((prev) => Math.min(steps.length - 1, prev + 1))}
             disabled={currentStepIdx >= steps.length - 1}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs transition-colors"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-950 border border-slate-200 text-xs transition-colors cursor-pointer"
             title="Next step"
           >
             <SkipForward className="w-3.5 h-3.5" />
           </button>
 
           {/* Speed switcher */}
-          <div className="flex items-center gap-1 ml-3 pl-3 border-l border-slate-800 text-[11px] text-slate-400">
-            <span>Speed:</span>
+          <div className="flex items-center gap-1 ml-3 pl-3 border-l border-slate-200 text-[11px] text-blue-900">
+            <span className="font-semibold">Speed:</span>
             {[
               { label: 'Slow', val: 1500 },
               { label: '1x', val: 1000 },
@@ -436,10 +436,10 @@ export const SearchesVisualizer: React.FC = () => {
               <button
                 key={s.label}
                 onClick={() => setSpeed(s.val)}
-                className={`px-2 py-0.5 rounded text-[10px] font-mono ${
+                className={`px-2 py-0.5 rounded text-[10px] font-mono cursor-pointer ${
                   speed === s.val
-                    ? 'bg-slate-700 text-white font-bold'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-blue-950 text-white font-bold'
+                    : 'text-blue-900 hover:bg-slate-200'
                 }`}
               >
                 {s.label}
@@ -448,18 +448,18 @@ export const SearchesVisualizer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-mono text-slate-300">
+        <div className="flex items-center gap-4 text-xs font-mono text-blue-950">
           <div>
-            Comparisons: <span className="text-cyan-400 font-bold">{activeStep.comparisons}</span>
+            Comparisons: <span className="text-red-600 font-extrabold">{activeStep.comparisons}</span>
           </div>
           <div>
-            Step <span className="text-white font-bold">{currentStepIdx + 1}</span> / {steps.length}
+            Step <span className="text-blue-950 font-extrabold">{currentStepIdx + 1}</span> / {steps.length}
           </div>
         </div>
       </div>
 
       {/* Visual Array Canvas */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-[#08090B] border border-slate-800 space-y-6 overflow-x-auto">
+      <div className="p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200 space-y-6 overflow-x-auto shadow-inner">
         <div className="flex items-center justify-center gap-2 sm:gap-3 min-w-[700px] py-4">
           {activeStep.arr.map((val, idx) => {
             let isCurrent = false;
@@ -494,47 +494,47 @@ export const SearchesVisualizer: React.FC = () => {
               }
             }
 
-            let cellClass = 'bg-[#17191D] border-slate-700 text-white';
+            let cellClass = 'bg-white border-slate-200 text-blue-950 shadow-xs';
             if (isFound) {
               cellClass =
-                'bg-emerald-500/25 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400 font-bold scale-105';
+                'bg-red-50 border-red-600 text-red-600 ring-2 ring-red-600 font-extrabold scale-105 shadow-md';
             } else if (isMid) {
               cellClass =
-                'bg-cyan-500/20 border-cyan-400 text-cyan-200 ring-2 ring-cyan-400 font-bold scale-105';
+                'bg-blue-100 border-blue-600 text-blue-950 ring-2 ring-blue-600 font-extrabold scale-105 shadow-md';
             } else if (isCurrent) {
               cellClass =
-                'bg-amber-500/20 border-amber-400 text-amber-200 ring-2 ring-amber-400 font-bold';
+                'bg-blue-50 border-blue-400 text-blue-900 ring-2 ring-blue-400 font-bold';
             } else if (isEliminated) {
               cellClass =
-                'bg-slate-900/40 border-slate-800/40 text-slate-600 opacity-30 line-through';
+                'bg-slate-100 border-slate-200 text-blue-900/40 opacity-40 line-through';
             }
 
             return (
               <div key={idx} className="flex flex-col items-center gap-1.5 transition-all">
                 {/* Pointer Tag */}
-                <div className="h-5 text-[10px] font-mono font-bold flex items-center justify-center">
+                <div className="h-5 text-[10px] font-mono font-extrabold flex items-center justify-center">
                   {isFound ? (
-                    <span className="text-emerald-400 animate-pulse">MATCH</span>
+                    <span className="text-red-600 animate-pulse">MATCH</span>
                   ) : isMid ? (
-                    <span className="text-cyan-400">MID</span>
+                    <span className="text-blue-950">MID</span>
                   ) : isLow ? (
-                    <span className="text-amber-400">LOW</span>
+                    <span className="text-blue-800">LOW</span>
                   ) : isHigh ? (
-                    <span className="text-rose-400">HIGH</span>
+                    <span className="text-red-600">HIGH</span>
                   ) : isCurrent ? (
-                    <span className="text-amber-400">CURR</span>
+                    <span className="text-blue-900">CURR</span>
                   ) : null}
                 </div>
 
                 {/* Number Box */}
                 <div
-                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl border flex items-center justify-center font-mono text-sm sm:text-base font-bold shadow-md transition-all duration-200 ${cellClass}`}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl border flex items-center justify-center font-mono text-sm sm:text-base font-extrabold transition-all duration-200 ${cellClass}`}
                 >
                   {val}
                 </div>
 
                 {/* Index Subscript */}
-                <span className="text-[10px] font-mono text-slate-500">[{idx}]</span>
+                <span className="text-[10px] font-mono text-blue-900/60 font-semibold">[{idx}]</span>
               </div>
             );
           })}
@@ -545,24 +545,24 @@ export const SearchesVisualizer: React.FC = () => {
       <div
         className={`p-4 rounded-xl border flex items-start gap-3 text-xs font-mono transition-colors ${
           activeStep.status === 'found'
-            ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
+            ? 'bg-red-50 border-red-200 text-red-700'
             : activeStep.status === 'not_found'
-            ? 'bg-rose-950/40 border-rose-500/40 text-rose-300'
-            : 'bg-[#121418] border-slate-800 text-slate-200'
+            ? 'bg-red-50 border-red-200 text-red-700'
+            : 'bg-blue-50/70 border-blue-200 text-blue-950'
         }`}
       >
         {activeStep.status === 'found' ? (
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <CheckCircle2 className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
         ) : activeStep.status === 'not_found' ? (
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
         ) : (
-          <HelpCircle className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <HelpCircle className="w-4 h-4 text-blue-900 shrink-0 mt-0.5" />
         )}
         <div className="space-y-1">
-          <span className="font-bold uppercase tracking-wider text-[10px] block opacity-70">
+          <span className="font-extrabold uppercase tracking-wider text-[10px] block opacity-80">
             Search Logic Invariant:
           </span>
-          <p className="leading-relaxed">{activeStep.log}</p>
+          <p className="leading-relaxed font-medium">{activeStep.log}</p>
         </div>
       </div>
     </div>

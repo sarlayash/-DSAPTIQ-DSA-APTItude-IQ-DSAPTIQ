@@ -9,9 +9,11 @@ import {
   Terminal,
   ShieldCheck,
   Globe,
-  Sliders
+  Sliders,
+  ExternalLink,
+  Download,
+  Github
 } from 'lucide-react';
-import { TimeZonesBar } from './TimeZonesBar';
 
 interface FooterProps {
   onNavigate?: (tab: string) => void;
@@ -26,176 +28,241 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   };
 
   return (
-    <footer className="border-t border-[#23262d] bg-[#0c0e12] print:hidden">
-      {/* Real-time World Time Zones Bar */}
-      <TimeZonesBar />
-
+    <footer className="border-t border-slate-200 bg-white print:hidden select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
-          {/* Brand Column (2 cols) */}
+          {/* Brand & Manifesto Column (2 cols) */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-200 via-slate-400 to-slate-600 p-[1px]">
-                <div className="w-full h-full bg-[#08090B] rounded-[7px] flex items-center justify-center font-mono font-bold text-slate-100 text-xs">
-                  DQ
-                </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-blue-950 flex items-center justify-center font-mono font-bold text-white text-sm shadow-xs border border-blue-900">
+                <span className="text-red-500 font-extrabold mr-0.5">D</span>
+                <span className="text-blue-100">Q</span>
               </div>
-              <span className="font-extrabold text-xl text-white tracking-tight">
+              <span className="font-extrabold text-2xl text-blue-950 tracking-tight">
                 DSAPTIQ
               </span>
-              <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-800/60 px-1.5 py-0.5 rounded">
-                v2.6 LIVE
+              <span className="text-[10px] font-mono text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded font-extrabold">
+                ENTERPRISE
               </span>
             </div>
 
-            <div className="text-xs text-slate-300 font-mono">
-              <span className="text-white font-bold">KAPIL PRESENTS DSAPTIQ</span>
-              <div className="text-slate-400">DSA + APTItude + IQ = DSAPTIQ</div>
-              <div className="text-cyan-400">Powered by SARLAYASH Mission</div>
+            <div className="text-xs font-mono space-y-0.5">
+              <div className="text-blue-950 font-extrabold">
+                KAPIL PRESENTS DRAPTI / DSAPTIQ
+              </div>
+              <div className="text-blue-900 font-semibold">
+                DSA + APTItude + IQ = DSAPTIQ Platform
+              </div>
+              <div className="text-red-600 font-bold">
+                Powered by SARLAYASH Mission · Institutional Standards
+              </div>
             </div>
 
-            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-              The premier explainable placement intelligence platform. Master 100 daily benchmark MCQs, 50 step-by-step solutions, live C/C++/Java/Python IDE execution, and track your true Placement Readiness Index (PRI).
+            <p className="text-xs text-blue-900/80 leading-relaxed max-w-sm">
+              The premier Fortune 500 placement intelligence and algorithmic reasoning platform. Master 100 daily industry benchmark MCQs, 50 comprehensive case solutions, multi-language C/C++/Java/Python IDE runtime simulations, and 8 visualizer laboratories.
             </p>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-emerald-400 font-medium">
-              <ShieldCheck className="w-4 h-4" />
+            <div className="pt-2 flex items-center gap-2 text-xs text-red-600 font-semibold">
+              <ShieldCheck className="w-4 h-4 text-red-600" />
               <span>100% Free Public Access · Zero Passwords Required</span>
             </div>
           </div>
 
-          {/* Column 2: Platform Modules */}
+          {/* Column 2: Platform Workspaces */}
           <div className="space-y-3">
-            <div className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-              Core Modules
+            <div className="text-xs font-mono font-bold text-blue-950 uppercase tracking-wider border-b border-slate-100 pb-1.5">
+              Workspaces
             </div>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <ul className="space-y-2 text-xs text-blue-900/80">
               <li>
                 <button
                   onClick={() => handleNav('dashboard')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <Compass className="w-3.5 h-3.5 text-slate-400" />
+                  <Compass className="w-3.5 h-3.5 text-blue-800" />
                   <span>Learner Dashboard</span>
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleNav('assessment')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-slate-400" />
+                  <BookOpen className="w-3.5 h-3.5 text-blue-800" />
                   <span>100 Daily MCQs</span>
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleNav('examples')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <Cpu className="w-3.5 h-3.5 text-slate-400" />
-                  <span>50 Solved Challenges</span>
+                  <Cpu className="w-3.5 h-3.5 text-blue-800" />
+                  <span>50 Solved Case Studies</span>
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleNav('ide')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5 text-cyan-300 font-medium"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Programming IDE (C/C++/Java/Py)</span>
+                  <Terminal className="w-3.5 h-3.5 text-red-600" />
+                  <span className="font-bold text-red-600">Multi-Language IDE</span>
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => handleNav('visualizer')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Visual Logic Studio</span>
+                  <Sparkles className="w-3.5 h-3.5 text-blue-800" />
+                  <span>8 Visualizer Studios</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Placement Matrix */}
+          <div className="space-y-3">
+            <div className="text-xs font-mono font-bold text-blue-950 uppercase tracking-wider border-b border-slate-100 pb-1.5">
+              Readiness & AI
+            </div>
+            <ul className="space-y-2 text-xs text-blue-900/80">
+              <li>
+                <button
+                  onClick={() => handleNav('intelligence')}
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
+                >
+                  <BarChart3 className="w-3.5 h-3.5 text-blue-800" />
+                  <span>PRI Matrix Calculator</span>
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => handleNav('intelligence')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  onClick={() => handleNav('wheel')}
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <BarChart3 className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Readiness Index (PRI)</span>
+                  <Award className="w-3.5 h-3.5 text-red-600" />
+                  <span>Daily Streak Wheel</span>
                 </button>
               </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Placement Tracks */}
-          <div className="space-y-3">
-            <div className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-              Placement Tracks
-            </div>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li>• Campus Recruitment Drives</li>
-              <li>• TCS Digital & TCS Prime</li>
-              <li>• Infosys DSE & Specialist</li>
-              <li>• Cognizant GenC & GenC Next</li>
-              <li>• Amazon & Google SDE-1</li>
-              <li>• Microsoft Core Software Track</li>
-              <li>• Accenture Advanced Technical</li>
-            </ul>
-          </div>
-
-          {/* Column 4: Global Clocks & Admin */}
-          <div className="space-y-3">
-            <div className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-              Global Support
-            </div>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li className="flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-slate-400" />
-                <span>USA: New York & SF</span>
-              </li>
-              <li className="flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-slate-400" />
-                <span>UK: London (BST/GMT)</span>
-              </li>
-              <li className="flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-slate-400" />
-                <span>India: New Delhi / Blr (IST)</span>
-              </li>
-              <li className="flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-slate-400" />
-                <span>Singapore: SGT (APAC Hub)</span>
-              </li>
-              <li className="pt-2">
+              <li>
                 <button
                   onClick={() => handleNav('admin')}
-                  className="hover:text-white transition-colors flex items-center gap-1.5 font-mono text-[11px] text-slate-400"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <Sliders className="w-3.5 h-3.5 text-slate-400" />
+                  <Sliders className="w-3.5 h-3.5 text-blue-800" />
                   <span>Admin & Question Bank</span>
                 </button>
+              </li>
+              <li>
+                <span className="text-blue-800 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                  <span>Anonymous Local Storage</span>
+                </span>
+              </li>
+              <li>
+                <span className="text-blue-800 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-900" />
+                  <span>Transferable Access Tokens</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Institutional Resources & GitHub */}
+          <div className="space-y-3">
+            <div className="text-xs font-mono font-bold text-blue-950 uppercase tracking-wider border-b border-slate-100 pb-1.5">
+              Resources & Deployment
+            </div>
+            <ul className="space-y-2 text-xs text-blue-900/80">
+              <li>
+                <a
+                  href="https://github.com/sarlayash/-DSAPTIQ-DSA-APTItude-IQ-DSAPTIQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5"
+                >
+                  <Github className="w-3.5 h-3.5 text-blue-950" />
+                  <span>GitHub Repository</span>
+                  <ExternalLink className="w-3 h-3 text-red-600" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://sarlayash.github.io/-DSAPTIQ-DSA-APTItude-IQ-DSAPTIQ/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5 font-bold text-red-600"
+                >
+                  <Globe className="w-3.5 h-3.5 text-red-600" />
+                  <span>Live GitHub Pages</span>
+                  <ExternalLink className="w-3 h-3 text-red-600" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./DSAPTIQ-web-ready.zip"
+                  download="DSAPTIQ-web-ready.zip"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5"
+                >
+                  <Download className="w-3.5 h-3.5 text-blue-800" />
+                  <span>Download Web Bundle (.ZIP)</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./DSAPTIQ-source.zip"
+                  download="DSAPTIQ-source.zip"
+                  className="hover:text-blue-950 hover:underline transition-colors flex items-center gap-1.5"
+                >
+                  <Download className="w-3.5 h-3.5 text-blue-800" />
+                  <span>Download Full Source (.ZIP)</span>
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar: Copyright & Attribution */}
-        <div className="pt-8 border-t border-[#23262d] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <span className="font-mono text-slate-200 font-bold uppercase tracking-wider">
-              KAPIL PRESENTS DSAPTIQ
+        {/* Global Recruitment Zones Summary Banner */}
+        <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono text-xs">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-blue-950" />
+            <span className="font-extrabold text-blue-950">
+              INTERNATIONAL HIRING ZONES:
             </span>
-            <span className="text-slate-600 hidden sm:inline">•</span>
-            <span>DSA + APTItude + IQ = DSAPTIQ</span>
-            <span className="text-slate-600 hidden sm:inline">•</span>
-            <span className="text-slate-200 font-medium">Powered by SARLAYASH Mission</span>
+            <span className="text-blue-900 hidden sm:inline">
+              USA (EDT & PDT) · UK (GMT/BST) · India (IST) · Singapore (SGT)
+            </span>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] font-mono text-slate-400">
-            <span>© 2026 DSAPTIQ</span>
-            <span>•</span>
-            <span>All Rights Reserved</span>
-            <span>•</span>
-            <span className="text-emerald-400">100% Free Public Tier</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <span className="px-2 py-0.5 rounded bg-white text-blue-950 font-bold border border-blue-200 shadow-2xs">
+              FAANG & Fortune 500 Standard
+            </span>
+            <span className="px-2 py-0.5 rounded bg-red-600 text-white font-bold shadow-2xs">
+              Live Recruitment Active
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Copyright & Accreditation Strip */}
+        <div className="border-t border-slate-200 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-blue-900/80">
+          <div>
+            © {new Date().getFullYear()}{' '}
+            <span className="font-bold text-blue-950">DSAPTIQ</span> · Kapil Presents DRAPTI.
+            All rights reserved.
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span>Powered by</span>
+            <span className="font-extrabold text-red-600">
+              SARLAYASH Mission
+            </span>
+            <span>·</span>
+            <span className="text-blue-950 font-semibold">
+              Logic. Visualize. Understand.
+            </span>
           </div>
         </div>
       </div>

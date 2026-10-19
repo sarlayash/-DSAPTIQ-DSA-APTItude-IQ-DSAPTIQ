@@ -9,15 +9,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Filter,
-  RotateCcw,
   Sparkles,
-  Zap,
   Send,
   Eye,
-  Check,
-  Cpu
+  RotateCcw
 } from 'lucide-react';
-import { Question, QuestionAttempt, AssessmentMode, AssessmentDomain } from '../types';
+import { Question, QuestionAttempt, AssessmentMode } from '../types';
 import { DAILY_100_QUESTIONS } from '../data/questionBank';
 
 interface AssessmentViewProps {
@@ -56,7 +53,7 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
     let list = DAILY_100_QUESTIONS;
 
     if (mode === 'diagnostic') {
-      // Diagnostic mode: 20 balanced calibration questions (first 20 across key categories)
+      // Diagnostic mode: 20 balanced calibration questions
       list = DAILY_100_QUESTIONS.slice(0, 20);
     } else if (mode === 'revision') {
       // Revision mode: only previously missed or bookmarked
@@ -65,7 +62,7 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
         (q) => missedIds.has(q.id) || bookmarks.includes(q.id)
       );
       if (list.length === 0) {
-        list = DAILY_100_QUESTIONS.slice(0, 10); // fallback if none missed
+        list = DAILY_100_QUESTIONS.slice(0, 10);
       }
     }
 
@@ -179,14 +176,14 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
 
   if (!currentQ) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-slate-400">
-        <p>No questions found under this filter.</p>
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center text-blue-900 bg-white border border-slate-200 rounded-2xl shadow-xs">
+        <p className="text-sm font-semibold">No questions found under this filter criteria.</p>
         <button
           onClick={() => {
             setSelectedDomain('All');
             setMode('practice');
           }}
-          className="mt-4 px-4 py-2 bg-slate-800 text-white rounded-lg text-xs"
+          className="mt-4 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
         >
           Reset Filters
         </button>
@@ -195,22 +192,21 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
   }
 
   const existingAttempt = attemptMap.get(currentQ.id);
-  const isAnswered = existingAttempt !== undefined;
   const isFlagged = flaggedIds.has(currentQ.id);
   const isBookmarked = bookmarks.includes(currentQ.id);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 select-none">
       {/* Assessment Controls Bar */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-lg">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xs">
         {/* Mode Selector */}
-        <div className="flex items-center gap-1.5 bg-[#08090B] p-1 rounded-xl border border-slate-800">
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-blue-100">
           {(
             [
-              { id: 'practice', label: 'Practice Mode', hint: 'Instant Feedback' },
-              { id: 'challenge', label: 'Challenge Mode', hint: 'Timed Exam' },
-              { id: 'revision', label: 'Revision Mode', hint: 'Mistakes / Flags' },
-              { id: 'diagnostic', label: 'Diagnostic', hint: '20 Calibration' },
+              { id: 'practice', label: 'Practice Mode', hint: 'Instant Explanations' },
+              { id: 'challenge', label: 'Challenge Mode', hint: 'Timed Simulation' },
+              { id: 'revision', label: 'Revision Mode', hint: 'Mistakes & Bookmarks' },
+              { id: 'diagnostic', label: 'Diagnostic', hint: '20 Calibration Questions' },
             ] as const
           ).map((m) => (
             <button
@@ -219,10 +215,10 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                 setMode(m.id);
                 setCurrentIndex(0);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 mode === m.id
-                  ? 'bg-slate-200 text-slate-900 font-bold shadow'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                  : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
               }`}
               title={m.hint}
             >
@@ -232,25 +228,25 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
         </div>
 
         {/* Timer and Progress */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-[#08090B] px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-white font-bold">{formatTimer(timerSeconds)}</span>
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-blue-100 text-xs font-mono">
+            <Clock className="w-3.5 h-3.5 text-blue-900" />
+            <span className="text-red-600 font-extrabold">{formatTimer(timerSeconds)}</span>
             <button
               onClick={() => setIsTimerRunning((prev) => !prev)}
-              className="text-[10px] text-slate-500 hover:text-slate-300 underline ml-1"
+              className="text-[10px] text-blue-800 hover:text-blue-950 underline ml-1 cursor-pointer"
             >
               {isTimerRunning ? 'Pause' : 'Resume'}
             </button>
           </div>
 
-          <div className="text-xs font-mono text-slate-300">
-            <span className="text-white font-bold">{answeredInFilter}</span> / {filteredQuestions.length} Complete
+          <div className="text-xs font-mono text-blue-900">
+            <span className="text-blue-950 font-extrabold">{answeredInFilter}</span> / {filteredQuestions.length} Answered
           </div>
 
           <button
             onClick={() => setShowSubmissionSummary(true)}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-200 hover:bg-white text-slate-900 font-bold text-xs flex items-center gap-1.5 shadow"
+            className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
             <span>Finish Set</span>
@@ -262,28 +258,28 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Question Workspace (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
             {/* Question Header */}
-            <div className="flex items-start justify-between gap-4 border-b border-[#2d3036] pb-4">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                  <span className="font-mono text-xs font-extrabold text-blue-950 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
                     Q{String(currentIndex + 1).padStart(3, '0')} · {currentQ.id}
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">
+                  <span className="text-xs text-blue-900 font-bold">
                     {currentQ.domain}
                   </span>
-                  <span className="text-slate-600">•</span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-blue-300">•</span>
+                  <span className="text-xs text-blue-800">
                     {currentQ.topic}
                   </span>
-                  <span className="text-slate-600">•</span>
-                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                  <span className="text-blue-300">•</span>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
                     currentQ.difficulty === 'Beginner'
-                      ? 'text-emerald-400 border-emerald-800/80 bg-emerald-950/40'
+                      ? 'text-blue-800 border-blue-200 bg-blue-50'
                       : currentQ.difficulty === 'Intermediate'
-                      ? 'text-cyan-400 border-cyan-800/80 bg-cyan-950/40'
-                      : 'text-amber-400 border-amber-800/80 bg-amber-950/40'
+                      ? 'text-blue-900 border-blue-300 bg-blue-100'
+                      : 'text-red-700 border-red-200 bg-red-50'
                   }`}>
                     {currentQ.difficulty}
                   </span>
@@ -294,23 +290,25 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
               <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => toggleFlag(currentQ.id)}
-                  className={`p-2 rounded-lg border text-xs transition-colors ${
+                  className={`p-2 rounded-xl border text-xs transition-colors cursor-pointer ${
                     isFlagged
-                      ? 'bg-amber-950/60 border-amber-600 text-amber-300'
-                      : 'bg-[#08090B] border-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-red-50 border-red-300 text-red-600'
+                      : 'bg-white border-slate-200 text-blue-800 hover:text-blue-950 hover:bg-blue-50'
                   }`}
                   title="Flag for review"
+                  aria-label="Flag question"
                 >
                   <Flag className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => onToggleBookmark(currentQ.id)}
-                  className={`p-2 rounded-lg border text-xs transition-colors ${
+                  className={`p-2 rounded-xl border text-xs transition-colors cursor-pointer ${
                     isBookmarked
-                      ? 'bg-cyan-950/60 border-cyan-600 text-cyan-300'
-                      : 'bg-[#08090B] border-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-blue-100 border-blue-400 text-blue-950'
+                      : 'bg-white border-slate-200 text-blue-800 hover:text-blue-950 hover:bg-blue-50'
                   }`}
                   title="Bookmark question"
+                  aria-label="Bookmark question"
                 >
                   <Bookmark className="w-4 h-4" />
                 </button>
@@ -318,23 +316,23 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
             </div>
 
             {/* Question Text */}
-            <div className="text-sm sm:text-base text-[#F2F3F5] font-normal leading-relaxed whitespace-pre-line">
+            <div className="text-sm sm:text-base text-blue-950 font-medium leading-relaxed whitespace-pre-line">
               {currentQ.text}
             </div>
 
             {/* Optional Code Snippet */}
             {currentQ.codeSnippet && (
-              <div className="bg-[#08090B] border border-[#2d3036] rounded-xl p-4 overflow-x-auto font-mono text-xs text-slate-300 leading-relaxed">
+              <div className="bg-blue-950 border border-blue-900 rounded-xl p-4 overflow-x-auto font-mono text-xs text-blue-100 leading-relaxed shadow-xs">
                 <pre>{currentQ.codeSnippet}</pre>
               </div>
             )}
 
             {/* Estimated Target Time */}
-            <div className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-slate-500" />
+            <div className="text-[11px] text-blue-800 font-mono flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-blue-900" />
               <span>Target Benchmark: {currentQ.estimatedSeconds}s</span>
               {existingAttempt && (
-                <span className="text-slate-500">
+                <span className="text-red-600 font-semibold">
                   (You took: {existingAttempt.timeSpentSeconds}s)
                 </span>
               )}
@@ -347,16 +345,16 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                 const isCorrectChoice = idx === currentQ.correctIndex;
                 const revealMode = mode === 'practice' || showSubmissionSummary;
 
-                let stateClasses = 'bg-[#08090B] border-slate-800 hover:border-slate-600 text-slate-300';
+                let stateClasses = 'bg-white border-slate-200 hover:border-blue-400 text-blue-950 hover:bg-blue-50/40';
 
                 if (revealMode && existingAttempt) {
                   if (isCorrectChoice) {
-                    stateClasses = 'bg-emerald-950/40 border-emerald-500 text-emerald-200 font-medium';
+                    stateClasses = 'bg-blue-50 border-blue-600 text-blue-950 font-bold shadow-2xs';
                   } else if (isSelected && !isCorrectChoice) {
-                    stateClasses = 'bg-rose-950/40 border-rose-500 text-rose-200 font-medium';
+                    stateClasses = 'bg-red-50 border-red-500 text-red-700 font-bold shadow-2xs';
                   }
                 } else if (isSelected) {
-                  stateClasses = 'bg-slate-800 border-slate-300 text-white font-medium';
+                  stateClasses = 'bg-blue-50 border-blue-700 text-blue-950 font-bold shadow-xs';
                 }
 
                 return (
@@ -364,17 +362,19 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 ${stateClasses} active:scale-[0.995]`}
+                    className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 cursor-pointer ${stateClasses} active:scale-[0.995]`}
                   >
-                    <span className="w-6 h-6 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center justify-center font-mono text-xs font-bold shrink-0">
+                    <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono text-xs font-extrabold shrink-0 ${
+                      isSelected ? 'bg-blue-900 text-white' : 'bg-slate-100 text-blue-900 border border-blue-100'
+                    }`}>
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span className="text-xs sm:text-sm pt-0.5 leading-relaxed">{opt}</span>
+                    <span className="text-xs sm:text-sm pt-0.5 leading-relaxed font-medium">{opt}</span>
                     {revealMode && existingAttempt && isCorrectChoice && (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-auto mt-1" />
+                      <CheckCircle2 className="w-4 h-4 text-blue-900 shrink-0 ml-auto mt-1" />
                     )}
                     {revealMode && existingAttempt && isSelected && !isCorrectChoice && (
-                      <XCircle className="w-4 h-4 text-rose-400 shrink-0 ml-auto mt-1" />
+                      <XCircle className="w-4 h-4 text-red-600 shrink-0 ml-auto mt-1" />
                     )}
                   </button>
                 );
@@ -382,11 +382,11 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
             </div>
 
             {/* Stepper Controls: Prev / Next */}
-            <div className="pt-4 flex items-center justify-between border-t border-[#2d3036]">
+            <div className="pt-4 flex items-center justify-between border-t border-slate-100">
               <button
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
-                className="px-4 py-2 rounded-xl bg-[#08090B] border border-slate-800 hover:border-slate-600 disabled:opacity-40 disabled:pointer-events-none text-xs font-semibold text-slate-300 flex items-center gap-1.5 transition-colors"
+                className="px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 disabled:opacity-40 disabled:pointer-events-none text-xs font-bold text-blue-900 flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Previous</span>
@@ -395,9 +395,9 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
               {mode === 'challenge' && !showExplanation && existingAttempt && (
                 <button
                   onClick={() => setShowExplanation(true)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-950 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <Eye className="w-3.5 h-3.5" />
+                  <Eye className="w-3.5 h-3.5 text-blue-900" />
                   <span>Reveal Explanation</span>
                 </button>
               )}
@@ -405,7 +405,7 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
               <button
                 onClick={handleNext}
                 disabled={currentIndex === filteredQuestions.length - 1}
-                className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-white text-slate-900 disabled:opacity-40 disabled:pointer-events-none text-xs font-bold flex items-center gap-1.5 transition-colors"
+                className="px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white disabled:opacity-40 disabled:pointer-events-none text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
               >
                 <span>Next Question</span>
                 <ChevronRight className="w-4 h-4" />
@@ -413,30 +413,30 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
             </div>
           </div>
 
-          {/* Explanation & Visual Trace Card (Revealed in Practice Mode or Upon Selection) */}
+          {/* Explanation & Visual Trace Card */}
           {showExplanation && (
-            <div className="bg-[#17191D] border border-slate-700 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
-              <div className="flex items-center justify-between border-b border-[#2d3036] pb-3">
+            <div className="bg-white border border-blue-200 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xs">
+              <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-slate-300" />
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-red-600" />
+                  <h3 className="text-sm font-extrabold text-blue-950 uppercase tracking-wider">
                     Worked Reasoning Path & Concept Insight
                   </h3>
                 </div>
-                <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-2 py-0.5 rounded">
-                  Correct Option: {String.fromCharCode(65 + currentQ.correctIndex)}
+                <span className="text-[11px] font-mono font-extrabold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded">
+                  Correct Answer: {String.fromCharCode(65 + currentQ.correctIndex)}
                 </span>
               </div>
 
               {/* Step-by-Step Logic Explanation */}
-              <div className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-2">
+              <div className="text-xs sm:text-sm text-blue-950 leading-relaxed space-y-2">
                 <p>{currentQ.explanation}</p>
               </div>
 
               {/* Visual Diagram / Trace */}
               {currentQ.visualTrace && (
-                <div className="bg-[#08090B] border border-[#2d3036] rounded-xl p-3.5 font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
-                  <span className="text-[10px] text-slate-500 block uppercase mb-1 font-bold">
+                <div className="bg-slate-50 border border-blue-100 rounded-xl p-3.5 font-mono text-xs text-blue-950 whitespace-pre-wrap leading-relaxed">
+                  <span className="text-[10px] text-blue-800 block uppercase mb-1 font-bold">
                     Visual Trace / Logic Pathway:
                   </span>
                   {currentQ.visualTrace}
@@ -446,20 +446,20 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
               {/* Metadata Badges: Interview Relevance & Common Pitfall */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
                 {currentQ.interviewRelevance && (
-                  <div className="p-3 rounded-xl bg-[#08090B] border border-slate-800 space-y-1">
-                    <span className="text-[10px] text-slate-400 font-mono uppercase block font-semibold">
+                  <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 space-y-1">
+                    <span className="text-[10px] text-blue-900 font-mono uppercase block font-extrabold">
                       Placement Relevance
                     </span>
-                    <p className="text-slate-300">{currentQ.interviewRelevance}</p>
+                    <p className="text-blue-950 font-medium">{currentQ.interviewRelevance}</p>
                   </div>
                 )}
                 {currentQ.commonPitfall && (
-                  <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-900/40 space-y-1">
-                    <span className="text-[10px] text-amber-400 font-mono uppercase block font-semibold flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
+                  <div className="p-3 rounded-xl bg-red-50 border border-red-200 space-y-1">
+                    <span className="text-[10px] text-red-700 font-mono uppercase block font-extrabold flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 text-red-600" />
                       Common Pitfall
                     </span>
-                    <p className="text-amber-200/90">{currentQ.commonPitfall}</p>
+                    <p className="text-red-800 font-medium">{currentQ.commonPitfall}</p>
                   </div>
                 )}
               </div>
@@ -470,10 +470,10 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
         {/* Right: Navigator & Domain Filters (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
           {/* Domain Category Filter */}
-          <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-4 shadow-lg space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3">
+            <div className="flex items-center justify-between text-xs text-blue-900 font-bold uppercase tracking-wider">
               <span>Domain Filter</span>
-              <Filter className="w-3.5 h-3.5" />
+              <Filter className="w-3.5 h-3.5 text-blue-800" />
             </div>
 
             <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
@@ -484,62 +484,62 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                     setSelectedDomain(d.name);
                     setCurrentIndex(0);
                   }}
-                  className={`w-full px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
+                  className={`w-full px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
                     selectedDomain === d.name
-                      ? 'bg-slate-200 text-slate-900 font-bold'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
+                      ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                      : 'text-blue-900 hover:text-blue-950 hover:bg-blue-50 font-medium'
                   }`}
                 >
                   <span className="truncate">{d.name}</span>
-                  <span className="font-mono text-[11px] opacity-70">({d.count})</span>
+                  <span className="font-mono text-[11px] opacity-80">({d.count})</span>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Question Grid Navigator */}
-          <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-4 shadow-lg space-y-4">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-300 font-bold uppercase tracking-wider">
+              <span className="text-xs text-blue-950 font-extrabold uppercase tracking-wider">
                 Question Navigator ({filteredQuestions.length})
               </span>
               <div className="flex items-center gap-2 text-[10px] font-mono">
-                <span className="flex items-center gap-1 text-emerald-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="flex items-center gap-1 text-blue-900 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-blue-900" />
                   Answered
                 </span>
-                <span className="flex items-center gap-1 text-amber-400">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="flex items-center gap-1 text-red-600 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-red-600" />
                   Flagged
                 </span>
               </div>
             </div>
 
             {/* Jump Grid */}
-            <div className="grid grid-cols-5 sm:grid-cols-6 gap-1.5 max-h-80 overflow-y-auto p-1 bg-[#08090B] rounded-xl border border-slate-800">
+            <div className="grid grid-cols-5 sm:grid-cols-6 gap-1.5 max-h-80 overflow-y-auto p-1.5 bg-slate-50 rounded-xl border border-slate-200">
               {filteredQuestions.map((q, idx) => {
                 const att = attemptMap.get(q.id);
                 const hasAnswer = att !== undefined;
                 const isCurrent = idx === currentIndex;
                 const isFlag = flaggedIds.has(q.id);
 
-                let btnStyle = 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-600';
+                let btnStyle = 'bg-white text-blue-900 border-slate-200 hover:border-blue-400 font-semibold';
                 if (hasAnswer) {
-                  btnStyle = 'bg-slate-700 text-white border-slate-500 font-bold';
+                  btnStyle = 'bg-blue-100 text-blue-950 border-blue-300 font-bold';
                 }
                 if (isCurrent) {
-                  btnStyle = 'ring-2 ring-white bg-slate-200 text-slate-950 font-bold';
+                  btnStyle = 'ring-2 ring-red-600 bg-blue-900 text-white font-extrabold';
                 }
 
                 return (
                   <button
                     key={q.id}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`h-9 rounded-lg border text-xs font-mono transition-all relative flex items-center justify-center ${btnStyle}`}
+                    className={`h-9 rounded-lg border text-xs font-mono transition-all relative flex items-center justify-center cursor-pointer ${btnStyle}`}
                   >
                     <span>{idx + 1}</span>
                     {isFlag && (
-                      <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-red-600" />
                     )}
                   </button>
                 );
@@ -551,48 +551,48 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
 
       {/* Submission Confirmation Modal */}
       {showSubmissionSummary && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#17191D] border border-slate-700 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-[#2d3036] pb-3">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+        <div className="fixed inset-0 z-50 bg-blue-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-lg font-extrabold text-blue-950 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-blue-900" />
                 Assessment Session Summary
               </h3>
               <button
                 type="button"
                 onClick={() => setShowSubmissionSummary(false)}
-                className="text-slate-500 hover:text-white"
+                className="text-blue-900 hover:text-red-600 font-bold cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 bg-[#08090B] rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-500 font-mono uppercase block">Total</span>
-                <span className="text-xl font-bold font-mono text-white">{filteredQuestions.length}</span>
+              <div className="p-3 bg-slate-50 rounded-xl border border-blue-100">
+                <span className="text-[10px] text-blue-800 font-mono uppercase block font-semibold">Total</span>
+                <span className="text-xl font-bold font-mono text-blue-950">{filteredQuestions.length}</span>
               </div>
-              <div className="p-3 bg-[#08090B] rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-500 font-mono uppercase block">Attempted</span>
-                <span className="text-xl font-bold font-mono text-cyan-300">{answeredInFilter}</span>
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                <span className="text-[10px] text-blue-800 font-mono uppercase block font-semibold">Attempted</span>
+                <span className="text-xl font-bold font-mono text-blue-900">{answeredInFilter}</span>
               </div>
-              <div className="p-3 bg-[#08090B] rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-500 font-mono uppercase block">Accuracy</span>
-                <span className="text-xl font-bold font-mono text-emerald-400">
+              <div className="p-3 bg-red-50 rounded-xl border border-red-200">
+                <span className="text-[10px] text-red-700 font-mono uppercase block font-semibold">Accuracy</span>
+                <span className="text-xl font-bold font-mono text-red-600">
                   {answeredInFilter > 0 ? Math.round((correctInFilter / answeredInFilter) * 100) : 0}%
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-slate-400 leading-relaxed">
-              All answers and response timings have been autosaved. Your Placement Readiness Index has been updated based on demonstrated performance.
+            <p className="text-xs text-blue-900 leading-relaxed font-medium">
+              All answers and response timings have been autosaved. Your Placement Readiness Index (PRI) has been calibrated based on demonstrated problem solving speed and accuracy.
             </p>
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setShowSubmissionSummary(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-blue-950 text-xs font-bold transition-colors cursor-pointer"
               >
                 Review Answers
               </button>
@@ -603,7 +603,7 @@ export const AssessmentView: React.FC<AssessmentViewProps> = ({
                     setShowSubmissionSummary(false);
                     onAssessmentCompleted();
                   }}
-                  className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-white text-slate-900 text-xs font-bold shadow"
+                  className="px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
                 >
                   View Updated PRI Score
                 </button>

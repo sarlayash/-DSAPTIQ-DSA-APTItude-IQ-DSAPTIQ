@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import {
   ListOrdered,
-  ArrowRight,
   Eye,
   Trash2,
-  RotateCcw,
   Cpu,
-  Play,
-  CheckCircle2,
-  Clock
+  Play
 } from 'lucide-react';
 
 export const QueueVisualizer: React.FC = () => {
@@ -63,126 +59,129 @@ export const QueueVisualizer: React.FC = () => {
   const handleClear = () => {
     setQueueItems([]);
     setPeekIndex(null);
-    setLog('Queue buffer cleared to empty state.');
+    setLog('Queue buffer cleared. FRONT and REAR reset to null.');
   };
 
-  // OS Scheduler Step
+  // OS Task Dispatch (FIFO)
   const handleProcessNextTask = () => {
-    if (tasks.length === 0) {
-      setProcessedTaskLog('All CPU task queue buffers have been executed and retired.');
-      return;
-    }
-    const cur = tasks[0];
+    if (tasks.length === 0) return;
+    const dispatched = tasks[0];
     setTasks(tasks.slice(1));
     setProcessedTaskLog(
-      `Dispatched task [${cur.id}] "${cur.name}" (Priority: ${cur.priority}) to CPU Core in FIFO order!`
+      `Dispatched [${dispatched.id}: ${dispatched.name}] (Priority: ${dispatched.priority}) to CPU core in FIFO arrival sequence.`
     );
   };
 
   const handleAddSampleTask = () => {
-    const names = [
-      'Disk I/O Sync',
-      'Memory Compaction',
-      'Kafka Consumer Poll',
-      'Database WAL Flush',
+    const randomNum = Math.floor(Math.random() * 800 + 100);
+    const newTasks = [
+      ...tasks,
+      {
+        id: `T-${randomNum}`,
+        name: `Async Service Job #${randomNum}`,
+        priority: randomNum % 2 === 0 ? 'High' : 'Normal',
+      },
     ];
-    const picked = names[Math.floor(Math.random() * names.length)];
-    const newT = {
-      id: `T-${Math.floor(100 + Math.random() * 900)}`,
-      name: picked,
-      priority: 'Normal',
-    };
-    setTasks([...tasks, newT]);
-    setProcessedTaskLog(`Added new task [${newT.id}] "${newT.name}" to CPU scheduling queue.`);
+    setTasks(newTasks);
+    setProcessedTaskLog(`Enqueued new task T-${randomNum} at REAR of process queue.`);
   };
 
   return (
-    <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#2d3036] pb-5">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6 select-none">
+      {/* Header & Mode Switcher */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <ListOrdered className="w-5 h-5 text-sky-400" />
-            <h2 className="text-xl font-bold text-white">FIFO Queue Buffer Studio</h2>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-sky-950/60 text-sky-300 border border-sky-800">
-              First-In, First-Out · O(1) Enqueue & Dequeue
+            <ListOrdered className="w-5 h-5 text-red-600" />
+            <h2 className="text-xl font-extrabold text-blue-950">Queue Laboratory (FIFO)</h2>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold">
+              Capacity: {queueItems.length} / 7 elements
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Observe dual-pointer FRONT and REAR shifts, circular modulo ring buffers, and operating system task queues.
+          <p className="text-xs text-blue-900 mt-1 font-medium">
+            First-In First-Out buffering: enqueue at rear, dequeue from front, circular array modes, and CPU job scheduling.
           </p>
         </div>
 
-        {/* Linear vs Circular Mode */}
-        <div className="flex items-center gap-1.5 bg-[#08090B] p-1 rounded-xl border border-slate-800">
-          {(['linear', 'circular'] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => setQueueMode(m)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                queueMode === m
-                  ? 'bg-slate-200 text-slate-900 font-bold shadow'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {m} Queue
-            </button>
-          ))}
+        {/* Mode Switcher */}
+        <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200">
+          <button
+            onClick={() => setQueueMode('linear')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              queueMode === 'linear'
+                ? 'bg-blue-900 text-white shadow-2xs'
+                : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
+            }`}
+          >
+            Linear Queue
+          </button>
+          <button
+            onClick={() => setQueueMode('circular')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              queueMode === 'circular'
+                ? 'bg-blue-900 text-white shadow-2xs'
+                : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
+            }`}
+          >
+            Circular Ring Queue
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Queue Display & Controls (7 cols) */}
+      {/* Main Grid: Visualizer Left + Task Scheduler Right */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Interactive Queue (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Action Operations Bar */}
-          <div className="flex flex-wrap items-center gap-2 bg-[#08090B] p-3.5 rounded-xl border border-slate-800 text-xs">
+          {/* Controls Bar */}
+          <div className="flex flex-wrap items-center gap-2 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+            <span className="text-blue-950 font-bold">Value:</span>
             <input
               type="number"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
-              className="w-16 px-2.5 py-1.5 rounded-lg bg-[#17191D] border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-sky-400"
+              className="w-16 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-blue-950 font-mono text-xs font-bold focus:outline-none focus:border-blue-400"
             />
             <button
               onClick={handleEnqueue}
-              className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs"
+              className="px-3 py-1.5 rounded-lg bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
             >
               Enqueue (Rear)
             </button>
             <button
               onClick={handleDequeue}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-700"
+              className="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs border border-red-200 cursor-pointer"
             >
               Dequeue (Front)
             </button>
             <button
               onClick={handlePeek}
-              className="px-3 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 font-semibold text-xs flex items-center gap-1"
+              className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-blue-900 border border-slate-200 font-bold text-xs flex items-center gap-1 cursor-pointer"
             >
-              <Eye className="w-3.5 h-3.5" />
+              <Eye className="w-3.5 h-3.5 text-blue-900" />
               <span>Peek Front</span>
             </button>
             <button
               onClick={handleClear}
-              className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800 text-xs ml-auto"
+              className="px-3 py-1.5 rounded-lg bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-bold ml-auto cursor-pointer"
             >
               Clear
             </button>
           </div>
 
           {/* Visual Canvas Display */}
-          <div className="p-8 rounded-2xl bg-[#08090B] border border-slate-800 flex items-center justify-center min-h-[240px] overflow-x-auto">
+          <div className="p-8 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center min-h-[240px] overflow-x-auto">
             {queueItems.length === 0 ? (
-              <div className="text-center font-mono text-xs text-slate-500 py-10">
+              <div className="text-center font-mono text-xs text-blue-900 font-bold py-10">
                 Queue Buffer is currently Empty (Front = Rear = NULL)
               </div>
             ) : queueMode === 'linear' ? (
               <div className="flex items-center gap-2 py-4">
                 {/* FRONT indicator */}
                 <div className="flex flex-col items-center mr-2">
-                  <span className="text-[10px] font-mono font-bold text-sky-400 uppercase tracking-wider">
+                  <span className="text-[10px] font-mono font-extrabold text-blue-950 uppercase tracking-wider">
                     FRONT (Exit)
                   </span>
-                  <span className="text-sky-400 text-sm">◄</span>
+                  <span className="text-blue-950 text-sm">◄</span>
                 </div>
 
                 {queueItems.map((val, idx) => {
@@ -190,22 +189,22 @@ export const QueueVisualizer: React.FC = () => {
                   const isRear = idx === queueItems.length - 1;
                   const isPeeked = peekIndex === idx;
 
-                  let cellClass = 'bg-[#17191D] border-slate-700 text-slate-200';
+                  let cellClass = 'bg-white border-slate-200 text-blue-950';
                   if (isPeeked) {
-                    cellClass = 'bg-cyan-500/25 border-cyan-400 text-cyan-100 ring-2 ring-cyan-400';
+                    cellClass = 'bg-red-50 border-red-600 text-red-600 font-extrabold ring-2 ring-red-600';
                   } else if (isFront) {
-                    cellClass = 'bg-sky-950/70 border-sky-400 text-sky-100 ring-1 ring-sky-400';
+                    cellClass = 'bg-blue-900 border-blue-950 text-white font-extrabold shadow-2xs';
                   } else if (isRear) {
-                    cellClass = 'bg-amber-950/70 border-amber-400 text-amber-100 ring-1 ring-amber-400';
+                    cellClass = 'bg-red-600 border-red-700 text-white font-extrabold shadow-2xs';
                   }
 
                   return (
                     <div
                       key={idx}
-                      className={`w-16 h-16 rounded-2xl border flex flex-col items-center justify-center font-mono text-xs font-bold transition-all duration-300 shadow-md ${cellClass}`}
+                      className={`w-16 h-16 rounded-2xl border flex flex-col items-center justify-center font-mono text-xs font-bold transition-all duration-300 shadow-2xs ${cellClass}`}
                     >
-                      <span className="text-sm">{val}</span>
-                      <span className="text-[9px] text-slate-400 font-normal">
+                      <span className="text-sm font-extrabold">{val}</span>
+                      <span className="text-[9px] font-bold opacity-80">
                         {isFront ? 'FRONT' : isRear ? 'REAR' : `[${idx}]`}
                       </span>
                     </div>
@@ -214,10 +213,10 @@ export const QueueVisualizer: React.FC = () => {
 
                 {/* REAR indicator */}
                 <div className="flex flex-col items-center ml-2">
-                  <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider">
+                  <span className="text-[10px] font-mono font-extrabold text-red-600 uppercase tracking-wider">
                     REAR (Enter)
                   </span>
-                  <span className="text-amber-400 text-sm">►</span>
+                  <span className="text-red-600 text-sm">►</span>
                 </div>
               </div>
             ) : (
@@ -234,16 +233,16 @@ export const QueueVisualizer: React.FC = () => {
                       key={idx}
                       className={`w-14 h-14 rounded-full border-2 flex flex-col items-center justify-center font-mono text-xs transition-all ${
                         isFront
-                          ? 'border-sky-400 bg-sky-950/60 text-sky-200 font-bold'
+                          ? 'border-blue-900 bg-blue-50 text-blue-950 font-extrabold shadow-2xs'
                           : isRear
-                          ? 'border-amber-400 bg-amber-950/60 text-amber-200 font-bold'
+                          ? 'border-red-600 bg-red-50 text-red-600 font-extrabold shadow-2xs'
                           : hasItem
-                          ? 'border-slate-600 bg-[#17191D] text-slate-200'
-                          : 'border-slate-800 bg-slate-900/40 text-slate-600 border-dashed'
+                          ? 'border-slate-300 bg-white text-blue-950 font-bold'
+                          : 'border-slate-200 bg-slate-100 text-blue-900/40 border-dashed'
                       }`}
                     >
                       <span>{val}</span>
-                      <span className="text-[8px] text-slate-500">slot {idx}</span>
+                      <span className="text-[8px] font-semibold opacity-70">slot {idx}</span>
                     </div>
                   );
                 })}
@@ -254,20 +253,20 @@ export const QueueVisualizer: React.FC = () => {
 
         {/* Right Column: Real-World OS Task / CPU Job Scheduler (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="p-5 rounded-2xl bg-[#08090B] border border-slate-800 space-y-4">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <Cpu className="w-4 h-4 text-sky-400" />
+              <h3 className="text-sm font-extrabold text-blue-950 flex items-center gap-1.5">
+                <Cpu className="w-4 h-4 text-blue-900" />
                 OS CPU Process Scheduler
               </h3>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold">
                 {tasks.length} In Queue
               </span>
             </div>
 
             <div className="space-y-2">
               {tasks.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[#121418] border border-slate-800 text-center font-mono text-xs text-slate-500">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center font-mono text-xs text-blue-900 font-medium">
                   CPU Idle · Process queue is empty
                 </div>
               ) : (
@@ -276,21 +275,21 @@ export const QueueVisualizer: React.FC = () => {
                     key={t.id}
                     className={`flex items-center justify-between p-2.5 rounded-xl border font-mono text-xs ${
                       idx === 0
-                        ? 'bg-sky-950/40 border-sky-500/40 text-white'
-                        : 'bg-[#121418] border-slate-800 text-slate-400'
+                        ? 'bg-blue-50 border-blue-300 text-blue-950 font-bold'
+                        : 'bg-slate-50 border-slate-200 text-blue-900'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-sky-400 font-bold">{t.id}</span>
-                      <span className="font-medium text-slate-200">{t.name}</span>
+                      <span className="text-[10px] text-blue-900 font-extrabold">{t.id}</span>
+                      <span className="font-semibold">{t.name}</span>
                     </div>
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded border ${
+                      className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
                         t.priority === 'Critical'
-                          ? 'bg-rose-950/60 border-rose-800 text-rose-300'
+                          ? 'bg-red-50 border-red-200 text-red-600'
                           : t.priority === 'High'
-                          ? 'bg-amber-950/60 border-amber-800 text-amber-300'
-                          : 'bg-slate-800 border-slate-700 text-slate-400'
+                          ? 'bg-blue-50 border-blue-200 text-blue-900'
+                          : 'bg-slate-100 border-slate-200 text-blue-800'
                       }`}
                     >
                       {t.priority}
@@ -304,25 +303,25 @@ export const QueueVisualizer: React.FC = () => {
               <button
                 onClick={handleProcessNextTask}
                 disabled={tasks.length === 0}
-                className="flex-1 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-40 text-white font-bold text-xs flex items-center justify-center gap-1.5"
+                className="flex-1 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 disabled:opacity-40 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
               >
                 <Play className="w-3.5 h-3.5" />
                 <span>Dispatch Next (FIFO)</span>
               </button>
               <button
                 onClick={handleAddSampleTask}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                className="px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-blue-950 text-xs font-bold border border-slate-200 cursor-pointer"
               >
                 + New Task
               </button>
             </div>
 
             {processedTaskLog && (
-              <div className="p-3 rounded-xl bg-[#121418] border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
-                <span className="text-[10px] text-sky-400 uppercase font-bold block">
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs font-mono text-blue-950 space-y-1">
+                <span className="text-[10px] text-red-600 uppercase font-extrabold block">
                   Scheduler Event:
                 </span>
-                <p className="text-[11px] leading-relaxed">{processedTaskLog}</p>
+                <p className="text-[11px] leading-relaxed font-medium">{processedTaskLog}</p>
               </div>
             )}
           </div>
@@ -330,11 +329,11 @@ export const QueueVisualizer: React.FC = () => {
       </div>
 
       {/* Main Status Log */}
-      <div className="p-4 rounded-xl bg-[#121418] border border-slate-800 space-y-1 font-mono text-xs">
-        <span className="text-[10px] text-slate-400 uppercase block font-bold">
+      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-1 font-mono text-xs">
+        <span className="text-[10px] text-blue-950 uppercase block font-extrabold">
           Queue Invariant:
         </span>
-        <p className="text-slate-200 leading-relaxed">{log}</p>
+        <p className="text-blue-950 leading-relaxed font-medium">{log}</p>
       </div>
     </div>
   );

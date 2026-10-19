@@ -1,20 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Compass,
-  BookOpen,
-  Award,
-  Sparkles,
-  BarChart3,
-  Sliders,
+  Globe,
+  PanelLeftClose,
+  PanelLeftOpen,
   Flame,
-  Shield,
-  Copy,
-  Check,
-  User,
-  LogOut,
-  Cpu,
   Terminal,
-  Globe
+  Sparkles,
+  BookOpen,
+  Cpu
 } from 'lucide-react';
 import { LearnerProfile, PRISnapshot } from '../types';
 import { TimeZonesBar } from './TimeZonesBar';
@@ -26,6 +19,8 @@ interface HeaderProps {
   pri: PRISnapshot;
   onLogout: () => void;
   onOpenProfile: () => void;
+  isSidebarCollapsed: boolean;
+  onToggleSidebar: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -33,213 +28,192 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentTab,
   learner,
   pri,
-  onLogout,
   onOpenProfile,
+  isSidebarCollapsed,
+  onToggleSidebar,
 }) => {
-  const [copied, setCopied] = React.useState(false);
-
-  const copyAccessCode = () => {
-    if (!learner) return;
-    navigator.clipboard.writeText(learner.accessCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const [showTimeZones, setShowTimeZones] = React.useState(true);
-
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Compass },
-    { id: 'assessment', label: '100 Daily MCQs', icon: BookOpen, badge: 'Daily' },
-    { id: 'examples', label: '50 Solved Examples', icon: Cpu, badge: '50' },
-    { id: 'ide', label: 'IDE & Coding', icon: Terminal, badge: 'C/C++/Py' },
-    { id: 'visualizer', label: 'Logic Studio', icon: Sparkles },
-    { id: 'wheel', label: 'Daily Wheel', icon: Award },
-    { id: 'intelligence', label: 'Readiness Index', icon: BarChart3 },
-    { id: 'admin', label: 'Admin & Bank', icon: Sliders },
-  ];
+  const [showTimeZones, setShowTimeZones] = useState<boolean>(true);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#08090B]/95 backdrop-blur-md border-b border-[#2d3036]">
-      {/* Top Endorsement Bar */}
-      <div className="bg-gradient-to-r from-[#0d0f13] via-[#17191d] to-[#0d0f13] border-b border-[#23262d] px-4 py-1.5 text-xs text-[#BFC2C9] flex flex-wrap items-center justify-between gap-2">
+    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs select-none">
+      {/* Top Fortune 500 Executive Strip */}
+      <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 px-4 py-1.5 text-xs text-blue-100 flex flex-wrap items-center justify-between gap-2 border-b border-blue-950">
         <div className="flex items-center gap-2">
-          <span className="inline-block px-1.5 py-0.5 rounded bg-slate-800 text-[10px] font-mono tracking-widest text-[#F2F3F5] uppercase border border-slate-700">
+          <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-mono font-extrabold tracking-wider uppercase shadow-2xs">
             KAPIL PRESENTS
           </span>
-          <span className="font-semibold text-slate-300">DSAPTIQ</span>
-          <span className="text-slate-500 hidden sm:inline">•</span>
-          <span className="text-slate-400 hidden sm:inline">DSA + APTItude + IQ = DSAPTIQ</span>
+          <span className="font-extrabold tracking-wide text-white">DSAPTIQ</span>
+          <span className="text-blue-300 hidden sm:inline">•</span>
+          <span className="text-blue-200 hidden sm:inline font-medium">
+            Daily Readiness Assessment & Placement Training Index
+          </span>
         </div>
-        <div className="flex items-center gap-2 text-[11px]">
+
+        <div className="flex items-center gap-3 text-[11px]">
           <button
             onClick={() => setShowTimeZones(!showTimeZones)}
-            className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors cursor-pointer"
-            title="Toggle live international placement time zones"
+            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-mono bg-blue-900 hover:bg-blue-800 text-white border border-blue-700 transition-colors cursor-pointer"
+            title="Toggle live international placement time zones (USA, UK, India, Singapore)"
           >
-            <Globe className="w-3 h-3 text-cyan-400" />
-            <span>Time Zones (USA · UK · IND · SGP)</span>
+            <Globe className="w-3 h-3 text-red-400" />
+            <span className="font-semibold">
+              {showTimeZones ? 'Hide Time Zones' : 'Show Time Zones (USA · UK · IND · SGP)'}
+            </span>
           </button>
-          <span className="text-slate-400 hidden sm:inline">Powered by</span>
-          <span className="text-[#F2F3F5] font-semibold tracking-wide bg-gradient-to-r from-slate-200 to-slate-400 bg-clip-text text-transparent hidden sm:inline">
+          <span className="text-blue-300 hidden md:inline">Powered by</span>
+          <span className="text-white font-bold tracking-wide hidden md:inline">
             SARLAYASH Mission
           </span>
-          <span className="hidden md:inline px-2 py-0.5 rounded-full bg-slate-800/80 text-[10px] text-slate-300 border border-slate-700">
-            100% Industry-Oriented
+          <span className="hidden lg:inline px-2 py-0.5 rounded bg-blue-950 text-[10px] font-mono text-red-400 border border-blue-800 font-bold">
+            100% Industry Standard
           </span>
         </div>
       </div>
 
-      {/* Real-time World Time Zones Bar */}
+      {/* Real-Time World Time Zones Bar */}
       {showTimeZones && <TimeZonesBar />}
 
-      {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 gap-4">
-        {/* Brand Logo & Tagline */}
-        <div 
-          onClick={() => setCurrentTab('dashboard')} 
-          className="flex items-center gap-3 cursor-pointer group select-none"
-        >
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-200 via-slate-400 to-slate-600 p-[1px] shadow-sm">
-            <div className="w-full h-full bg-[#08090B] rounded-[7px] flex items-center justify-center font-mono font-bold text-slate-100 text-xs tracking-wider">
-              DQ
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg tracking-tight text-[#F2F3F5] group-hover:text-white transition-colors">
+      {/* Main Header Bar */}
+      <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-3 bg-white">
+        {/* Left Side: Sidebar Expand/Collapse Toggle & Brand Title */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onToggleSidebar}
+            className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-blue-950 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer shadow-2xs group"
+            title={isSidebarCollapsed ? 'Expand Navigation Sidebar' : 'Collapse Navigation Sidebar'}
+            aria-label="Toggle Navigation Sidebar"
+          >
+            {isSidebarCollapsed ? (
+              <>
+                <PanelLeftOpen className="w-4 h-4 text-blue-900 group-hover:text-red-600 transition-colors" />
+                <span className="text-[11px] font-mono font-bold text-blue-900 hidden sm:inline">
+                  Expand
+                </span>
+              </>
+            ) : (
+              <>
+                <PanelLeftClose className="w-4 h-4 text-blue-900 group-hover:text-red-600 transition-colors" />
+                <span className="text-[11px] font-mono font-bold text-blue-900 hidden sm:inline">
+                  Collapse
+                </span>
+              </>
+            )}
+          </button>
+
+          <div
+            onClick={() => setCurrentTab('dashboard')}
+            className="flex items-center gap-2 cursor-pointer select-none"
+          >
+            <div className="flex flex-col">
+              <span className="font-extrabold text-base tracking-tight text-blue-950 leading-none">
                 DSAPTIQ
               </span>
-              <span className="text-[10px] font-mono text-slate-400 bg-slate-800/60 px-1.5 py-0.5 rounded border border-slate-700/60">
-                v2.6
+              <span className="text-[9px] font-bold text-red-600 tracking-wider uppercase mt-0.5">
+                Fortune 500 Executive Suite
               </span>
             </div>
-            <p className="text-[11px] text-[#BFC2C9] hidden sm:block tracking-wide">
-              DSA + APTITUDE + IQ · LOGIC · VISUALIZE · UNDERSTAND
-            </p>
           </div>
         </div>
 
-        {/* Center Nav Links */}
-        <nav className="hidden lg:flex items-center gap-1 bg-[#121418] p-1 rounded-xl border border-[#2d3036]">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setCurrentTab(item.id)}
-                className={`relative px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
-                  isActive
-                    ? 'bg-slate-200 text-slate-900 font-semibold shadow-sm'
-                    : 'text-[#BFC2C9] hover:text-[#F2F3F5] hover:bg-slate-800/50'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} />
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span
-                    className={`text-[9px] px-1 py-0.2 rounded font-mono ${
-                      isActive
-                        ? 'bg-slate-900/20 text-slate-950 font-bold'
-                        : 'bg-slate-800 text-slate-300'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Learner Info & PRI Quick Badge */}
-        {learner ? (
-          <div className="flex items-center gap-2">
-            {/* PRI Mini Score */}
-            <div 
-              onClick={() => setCurrentTab('intelligence')}
-              className="cursor-pointer flex items-center gap-2 bg-[#17191D] hover:bg-[#1d2127] border border-[#2d3036] px-2.5 py-1.5 rounded-lg transition-colors"
-              title="Placement Readiness Index (Click for full analysis)"
+        {/* Center / Right: Quick Navigation Actions & PRI Metrics */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick Module Launchers */}
+          <div className="hidden lg:flex items-center gap-1 border-r border-slate-200 pr-3">
+            <button
+              onClick={() => setCurrentTab('assessment')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                currentTab === 'assessment'
+                  ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                  : 'text-blue-900 hover:bg-blue-50 hover:text-blue-950'
+              }`}
             >
-              <div className="text-right">
-                <div className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">PRI SCORE</div>
-                <div className="text-sm font-bold font-mono text-[#F2F3F5] leading-none">
-                  {pri.overallScore}<span className="text-xs text-slate-500 font-normal">/100</span>
-                </div>
-              </div>
-              <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-                <span className={`text-xs font-bold font-mono ${
-                  pri.overallScore >= 75 ? 'text-emerald-400' : pri.overallScore >= 50 ? 'text-slate-200' : 'text-amber-400'
-                }`}>
-                  {pri.overallScore}
-                </span>
-              </div>
-            </div>
+              <BookOpen className="w-3.5 h-3.5 text-blue-800" />
+              <span>100 MCQs</span>
+            </button>
+            <button
+              onClick={() => setCurrentTab('examples')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                currentTab === 'examples'
+                  ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                  : 'text-blue-900 hover:bg-blue-50 hover:text-blue-950'
+              }`}
+            >
+              <Cpu className="w-3.5 h-3.5 text-blue-800" />
+              <span>50 Cases</span>
+            </button>
+            <button
+              onClick={() => setCurrentTab('ide')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                currentTab === 'ide'
+                  ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                  : 'text-blue-900 hover:bg-blue-50 hover:text-blue-950'
+              }`}
+            >
+              <Terminal className="w-3.5 h-3.5 text-red-600" />
+              <span className="text-red-700 font-bold">IDE</span>
+            </button>
+            <button
+              onClick={() => setCurrentTab('visualizer')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                currentTab === 'visualizer'
+                  ? 'bg-blue-900 text-white font-bold shadow-2xs'
+                  : 'text-blue-900 hover:bg-blue-50 hover:text-blue-950'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-800" />
+              <span>Visualizer</span>
+            </button>
+          </div>
 
-            {/* Streak & Protection */}
-            <div className="hidden sm:flex items-center gap-1.5 bg-[#17191D] border border-[#2d3036] px-2 py-1.5 rounded-lg text-xs">
-              <span className="flex items-center text-amber-400 font-mono font-medium gap-1" title="Daily Learning Streak">
-                <Flame className="w-3.5 h-3.5 fill-amber-500/30 text-amber-400" />
-                {learner.streakCount}d
-              </span>
-              <span className="text-slate-600">|</span>
-              <span className="flex items-center text-cyan-400 font-mono gap-1" title="Streak Protection Tokens">
-                <Shield className="w-3 h-3 text-cyan-400" />
-                {learner.streakProtectionTokens}
-              </span>
+          {/* PRI Score Metric Pill */}
+          <div
+            onClick={() => setCurrentTab('intelligence')}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 hover:border-blue-400 cursor-pointer transition-all shadow-2xs"
+            title="View Real-Time Placement Readiness Index"
+          >
+            <div className="text-[10px] font-mono font-bold text-blue-900 uppercase">
+              PRI
             </div>
-
-            {/* Profile Avatar / Menu */}
-            <div className="flex items-center gap-1">
-              <button
-                onClick={onOpenProfile}
-                className="flex items-center gap-2 bg-[#17191D] hover:bg-[#21242b] border border-[#2d3036] px-2.5 py-1.5 rounded-lg text-xs text-[#F2F3F5] transition-colors"
-                title="Learner Profile & Access Code"
-              >
-                <div className="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-200">
-                  {learner.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="max-w-[80px] sm:max-w-[110px] truncate font-medium">
-                  {learner.name}
-                </span>
-              </button>
+            <div className="h-4 w-px bg-blue-200" />
+            <div className="text-sm font-extrabold font-mono text-red-600">
+              {pri.overallScore}
+              <span className="text-[10px] text-blue-900 font-normal">/100</span>
             </div>
           </div>
-        ) : (
-          <div className="flex items-center gap-2">
+
+          {/* Streak Indicator */}
+          {learner && (
+            <div className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-mono font-bold">
+              <Flame className="w-3.5 h-3.5 fill-red-600 text-red-600" />
+              <span>{learner.streakCount || 1}d</span>
+            </div>
+          )}
+
+          {/* Learner Profile Pill / Quick Onboarding */}
+          {learner ? (
+            <button
+              onClick={onOpenProfile}
+              className="flex items-center gap-2 pl-2 pr-3 py-1 rounded-xl bg-white border border-slate-200 hover:border-blue-300 transition-all cursor-pointer shadow-2xs group"
+            >
+              <div className="w-7 h-7 rounded-full bg-blue-950 text-white font-extrabold text-xs flex items-center justify-center">
+                {learner.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xs font-bold text-blue-950 max-w-[100px] truncate hidden sm:inline">
+                {learner.name}
+              </span>
+            </button>
+          ) : (
             <button
               onClick={() => {
                 setCurrentTab('dashboard');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-white text-slate-900 font-medium text-xs transition-colors"
+              className="px-3.5 py-1.5 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
               Begin Journey
             </button>
-          </div>
-        )}
-      </div>
-
-      {/* Mobile Secondary Sub-Nav Bar */}
-      <div className="lg:hidden flex items-center overflow-x-auto px-4 py-2 bg-[#121418] border-t border-[#23262d] gap-1 scrollbar-none">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setCurrentTab(item.id)}
-              className={`shrink-0 px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 ${
-                isActive
-                  ? 'bg-slate-200 text-slate-950 font-semibold'
-                  : 'text-[#BFC2C9] hover:bg-slate-800/40'
-              }`}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+          )}
+        </div>
       </div>
     </header>
   );

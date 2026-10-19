@@ -21,8 +21,6 @@ import {
   Terminal
 } from 'lucide-react';
 import { LearnerProfile, PRISnapshot, QuestionAttempt } from '../types';
-import { DAILY_100_QUESTIONS } from '../data/questionBank';
-import { DAILY_50_SOLVED_EXAMPLES } from '../data/solvedExamples';
 import { canSpinWheelToday } from '../services/storage';
 
 interface DashboardViewProps {
@@ -54,95 +52,95 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
   const understoodCount = learner.understoodExamples?.length || 0;
 
-  // Band badge color helper
+  // Fortune 500 Band badge helper (strictly Red & Blue fonts)
   const getBandBadge = (score: number) => {
-    if (score >= 90) return { label: 'High Demonstrated Readiness', color: 'text-emerald-300 bg-emerald-950/60 border-emerald-700/80' };
-    if (score >= 75) return { label: 'Strong Demonstrated Readiness', color: 'text-cyan-300 bg-cyan-950/60 border-cyan-700/80' };
-    if (score >= 60) return { label: 'Progressing Toward Placement', color: 'text-slate-200 bg-slate-800/80 border-slate-600' };
-    if (score >= 40) return { label: 'Developing Readiness', color: 'text-amber-300 bg-amber-950/60 border-amber-700/80' };
-    return { label: 'Foundation Building', color: 'text-rose-300 bg-rose-950/60 border-rose-800/80' };
+    if (score >= 90) return { label: 'Top Tier Placement Ready', color: 'text-blue-950 bg-blue-100 border-blue-300 font-extrabold' };
+    if (score >= 75) return { label: 'Strong Demonstrated Readiness', color: 'text-blue-900 bg-blue-50 border-blue-200 font-bold' };
+    if (score >= 60) return { label: 'Progressing Toward Placement', color: 'text-blue-800 bg-slate-100 border-slate-200 font-medium' };
+    if (score >= 40) return { label: 'Developing Readiness', color: 'text-red-700 bg-red-50 border-red-200 font-bold' };
+    return { label: 'Foundation Calibration', color: 'text-red-800 bg-red-100 border-red-300 font-bold' };
   };
 
   const band = getBandBadge(pri.overallScore);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      {/* Top Welcome & Access Code Header */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
-        {/* Subtle decorative glow */}
-        <div className="absolute -right-12 -top-12 w-48 h-48 bg-slate-700/10 rounded-full blur-2xl pointer-events-none" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 select-none">
+      {/* Top Executive Header Card */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm relative overflow-hidden">
+        {/* Subtle executive accent line */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-950 via-red-600 to-blue-900" />
 
-        <div className="space-y-1 z-10">
+        <div className="space-y-1.5 z-10">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-              COMMAND CENTER · TODAY'S SESSION
+            <span className="text-xs font-mono font-bold text-red-600 uppercase tracking-wider">
+              EXECUTIVE COHORT · TODAY'S SESSION
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="text-xs text-slate-300 font-medium">{learner.target}</span>
+            <span className="text-blue-200">•</span>
+            <span className="text-xs text-blue-900 font-semibold">{learner.target}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-950 tracking-tight">
             Ready to Practice, {learner.name}?
           </h1>
-          <p className="text-xs sm:text-sm text-[#BFC2C9] max-w-xl">
-            100 questions and 50 solved examples are active for your assessment cohort. Elevate your logic and measure your PRI score.
+          <p className="text-xs sm:text-sm text-blue-900/80 max-w-xl leading-relaxed">
+            100 daily benchmark questions, 50 solved case studies, and 8 visualizer laboratories are active. Elevate your logic and measure your Placement Readiness Index (PRI).
           </p>
         </div>
 
         {/* Access Code and Streak Badges */}
         <div className="flex flex-wrap items-center gap-3 z-10">
           {/* Access Code Card */}
-          <div className="bg-[#08090B] border border-slate-700/80 px-3.5 py-2 rounded-xl flex items-center gap-3">
+          <div className="bg-slate-50 border border-blue-200/80 px-3.5 py-2 rounded-xl flex items-center gap-3 shadow-2xs">
             <div>
-              <div className="text-[10px] text-slate-400 font-mono uppercase">Learner Access Code</div>
-              <div className="text-xs font-mono font-bold text-white tracking-wider">{learner.accessCode}</div>
+              <div className="text-[10px] text-blue-800 font-mono font-bold uppercase">Access Token</div>
+              <div className="text-xs font-mono font-extrabold text-blue-950 tracking-wider">{learner.accessCode}</div>
             </div>
             <button
               onClick={copyCode}
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-              title="Copy access code for backup"
+              className="p-1.5 rounded-lg bg-white hover:bg-blue-50 text-blue-900 border border-slate-200 transition-colors cursor-pointer"
+              title="Copy access token for backup"
             >
-              {codeCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {codeCopied ? <Check className="w-3.5 h-3.5 text-red-600" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
           </div>
 
           {/* Daily Streak Indicator */}
-          <div className="bg-[#08090B] border border-slate-700/80 px-3.5 py-2 rounded-xl flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-950/40 border border-amber-800/60 flex items-center justify-center text-amber-400">
-              <Flame className="w-4 h-4 fill-amber-500/20" />
+          <div className="bg-red-50 border border-red-200 px-3.5 py-2 rounded-xl flex items-center gap-2.5 shadow-2xs">
+            <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-600">
+              <Flame className="w-4 h-4 fill-red-600" />
             </div>
             <div>
-              <div className="text-[10px] text-slate-400 font-mono uppercase">Daily Streak</div>
-              <div className="text-xs font-mono font-bold text-amber-300">{learner.streakCount} Days Active</div>
+              <div className="text-[10px] text-red-700 font-mono font-bold uppercase">Daily Streak</div>
+              <div className="text-xs font-mono font-extrabold text-red-700">{learner.streakCount} Days Active</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Primary Row: Placement Readiness Index (PRI) Intelligence Card */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#2d3036] pb-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold tracking-widest text-slate-400 uppercase">
+              <span className="text-xs font-mono font-bold tracking-widest text-blue-950 uppercase">
                 INTELLIGENCE ENGINE
               </span>
               <span className={`text-[11px] font-mono px-2 py-0.5 rounded border ${band.color}`}>
                 {band.label}
               </span>
               {pri.isProvisional && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700" title="Based on under 20 attempts">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold" title="Based on under 20 attempts">
                   Provisional
                 </span>
               )}
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-blue-950 mt-1">
               Placement Readiness Index (PRI)
             </h2>
           </div>
 
           <button
             onClick={() => onNavigate('intelligence')}
-            className="text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors self-end sm:self-auto"
+            className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline flex items-center gap-1.5 transition-colors self-end sm:self-auto cursor-pointer"
           >
             <span>View Full Diagnostic Breakdown</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -151,7 +149,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Main Dial / Score */}
-          <div className="lg:col-span-4 flex flex-col items-center justify-center text-center p-6 rounded-xl bg-[#08090B] border border-slate-800 relative">
+          <div className="lg:col-span-4 flex flex-col items-center justify-center text-center p-6 rounded-2xl bg-slate-50 border border-blue-100 shadow-2xs">
             <div className="relative w-40 h-40 flex items-center justify-center">
               {/* Circular Gauge Track */}
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
@@ -162,7 +160,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="transparent"
-                  className="text-slate-800/80"
+                  className="text-blue-100"
                 />
                 <circle
                   cx="50"
@@ -174,23 +172,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   strokeDasharray={264}
                   strokeDashoffset={264 - (264 * pri.overallScore) / 100}
                   strokeLinecap="round"
-                  className="text-slate-200 transition-all duration-1000 ease-out"
+                  className="text-red-600 transition-all duration-1000 ease-out"
                 />
               </svg>
 
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-extrabold font-mono text-white tracking-tight">
+                <span className="text-4xl font-extrabold font-mono text-blue-950 tracking-tight">
                   {pri.overallScore}
                 </span>
-                <span className="text-xs font-mono text-slate-400">/ 100</span>
+                <span className="text-xs font-mono font-bold text-red-600">/ 100</span>
               </div>
             </div>
 
             <div className="mt-4 space-y-1">
-              <div className="text-xs font-semibold text-slate-200">
+              <div className="text-xs font-bold text-blue-950">
                 {pri.interpretation}
               </div>
-              <p className="text-[11px] text-slate-400 max-w-xs">
+              <p className="text-[11px] text-blue-900/80 max-w-xs">
                 {pri.isProvisional
                   ? `Calibrating based on ${pri.totalAttemptsCount} recorded attempts. Reach 20 to establish index.`
                   : `Validated evidence across ${pri.totalAttemptsCount} assessment attempts.`}
@@ -200,9 +198,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           {/* 6 Component Breakdown Bars */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
-              <span>Weighted Component Scores (\(PRI = \sum w_i s_i\))</span>
-              <span className="text-[11px] text-slate-500">Weight</span>
+            <div className="text-xs font-mono font-bold text-blue-950 uppercase tracking-wider flex items-center justify-between">
+              <span>Weighted Component Scores (PRI = ∑ wᵢ · sᵢ)</span>
+              <span className="text-[11px] text-blue-800 font-bold">Weight</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -214,21 +212,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 { label: 'Solving Speed & Tempo', score: pri.components.speed, weight: '10%', domain: 'Time vs Estimated Benchmarks' },
                 { label: 'Demonstrated Consistency', score: pri.components.consistency, weight: '10%', domain: 'Active Streaks & Sets' },
               ].map((comp, idx) => (
-                <div key={idx} className="bg-[#121418] border border-[#23262d] p-3 rounded-xl space-y-1.5">
+                <div key={idx} className="bg-slate-50 border border-slate-200 p-3 rounded-xl space-y-1.5 shadow-2xs">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-slate-200">{comp.label}</span>
+                    <span className="font-bold text-blue-950">{comp.label}</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-slate-400 text-[11px]">{comp.weight}</span>
-                      <span className="font-mono font-bold text-white">{comp.score}%</span>
+                      <span className="font-mono text-blue-800 text-[11px] font-semibold">{comp.weight}</span>
+                      <span className="font-mono font-extrabold text-red-600">{comp.score}%</span>
                     </div>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
                     <div
-                      className="h-full bg-slate-300 rounded-full transition-all duration-700"
+                      className="h-full bg-blue-900 rounded-full transition-all duration-700"
                       style={{ width: `${comp.score}%` }}
                     />
                   </div>
-                  <div className="text-[10px] text-slate-500 font-mono truncate">{comp.domain}</div>
+                  <div className="text-[10px] text-blue-800/80 font-mono truncate">{comp.domain}</div>
                 </div>
               ))}
             </div>
@@ -237,15 +235,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Actionable Next Steps / Interventions */}
         {pri.recommendedActions && pri.recommendedActions.length > 0 && (
-          <div className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
+          <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-bold text-blue-950">
+              <Zap className="w-3.5 h-3.5 text-red-600" />
               <span>Recommended High-Priority Actions to Increase Your PRI</span>
             </div>
-            <ul className="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+            <ul className="text-xs text-blue-900 space-y-1.5 list-disc list-inside">
               {pri.recommendedActions.map((action, i) => (
                 <li key={i} className="leading-relaxed">
-                  <span className="text-slate-300">{action}</span>
+                  <span className="text-blue-950 font-medium">{action}</span>
                 </li>
               ))}
             </ul>
@@ -254,32 +252,31 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Real Industry IDE Highlight Banner */}
-      <div className="bg-gradient-to-r from-emerald-950/40 via-cyan-950/30 to-slate-900 border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden group shadow-xl">
-        <div className="absolute -right-8 -top-8 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-r from-blue-50 via-white to-red-50 border border-blue-200 rounded-2xl p-6 sm:p-8 relative overflow-hidden group shadow-sm">
         <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
-                NEW FEATURE
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-red-600 text-white font-mono shadow-2xs">
+                INDUSTRY IDE
               </span>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-blue-900 font-mono font-bold">
                 C · C++ · Java · Python 3
               </span>
             </div>
-            <h3 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Terminal className="w-5 h-5 text-emerald-400" />
+            <h3 className="text-xl font-extrabold text-blue-950 tracking-tight flex items-center gap-2">
+              <Terminal className="w-5 h-5 text-red-600" />
               Programming IDE & Real Industry Solutions
             </h3>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Run, edit, and debug algorithmic code directly in your browser. Inspect and load authentic placement interview solutions tested at <strong className="text-white">Google, Amazon, TCS Digital, Infosys DSE, Microsoft, and Meta</strong> with time & space complexity breakdowns.
+            <p className="text-sm text-blue-900/90 max-w-2xl leading-relaxed">
+              Run, edit, and debug algorithmic code directly in your browser. Inspect and load authentic placement interview solutions tested at <strong className="text-blue-950 font-extrabold">Google, Amazon, TCS Digital, Infosys DSE, Microsoft, and Meta</strong> with time & space complexity breakdowns.
             </p>
           </div>
           <button
             onClick={() => onNavigate('ide')}
-            className="shrink-0 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-lg shadow-emerald-900/30 flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
+            className="shrink-0 px-5 py-3 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-sm shadow-md flex items-center gap-2 transition-all cursor-pointer"
           >
             <span>Launch IDE & Solutions</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-red-400" />
           </button>
         </div>
       </div>
@@ -287,42 +284,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* 4 Feature Workspaces Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Card 1: 100 MCQs Assessment */}
-        <div className="bg-[#17191D] border border-[#2d3036] hover:border-slate-500 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-lg">
+        <div className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-900">
                 <BookOpen className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+              <span className="text-[10px] font-mono text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200 font-bold">
                 100 MCQs
               </span>
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-white group-hover:text-slate-100">
+              <h3 className="text-base font-extrabold text-blue-950 group-hover:text-blue-800">
                 Daily Assessment
               </h3>
-              <p className="text-xs text-[#BFC2C9] mt-1 leading-relaxed">
+              <p className="text-xs text-blue-900/80 mt-1 leading-relaxed">
                 Attempt 100 non-repeated questions spanning Quant, Logical, Verbal, DSA, and Industry Scenarios.
               </p>
             </div>
 
             {/* Quick Metrics */}
-            <div className="bg-[#08090B] p-3 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between text-xs font-mono">
               <div>
-                <span className="text-slate-500 block text-[10px]">PROGRESS</span>
-                <span className="text-white font-bold">{answeredCount} / 100</span>
+                <span className="text-blue-800 block text-[10px] font-semibold">PROGRESS</span>
+                <span className="text-blue-950 font-extrabold">{answeredCount} / 100</span>
               </div>
               <div className="text-right">
-                <span className="text-slate-500 block text-[10px]">ACCURACY</span>
-                <span className="text-emerald-400 font-bold">{accuracy}%</span>
+                <span className="text-blue-800 block text-[10px] font-semibold">ACCURACY</span>
+                <span className="text-red-600 font-extrabold">{accuracy}%</span>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => onNavigate('assessment')}
-            className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-200 hover:bg-white text-slate-950 font-bold text-xs transition-colors flex items-center justify-center gap-2"
+            className="mt-6 w-full py-2.5 px-4 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
           >
             <span>Launch Assessment</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -330,42 +327,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Card 2: 50 Solved Examples */}
-        <div className="bg-[#17191D] border border-[#2d3036] hover:border-slate-500 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-lg">
+        <div className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-900">
                 <Cpu className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+              <span className="text-[10px] font-mono text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-bold">
                 50 Worked
               </span>
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-white group-hover:text-slate-100">
+              <h3 className="text-base font-extrabold text-blue-950 group-hover:text-blue-800">
                 50 Solved Examples
               </h3>
-              <p className="text-xs text-[#BFC2C9] mt-1 leading-relaxed">
+              <p className="text-xs text-blue-900/80 mt-1 leading-relaxed">
                 Step-by-step reasoning paths, ASCII diagrams, interview relevance, and misconception alerts.
               </p>
             </div>
 
             {/* Quick Metrics */}
-            <div className="bg-[#08090B] p-3 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between text-xs font-mono">
               <div>
-                <span className="text-slate-500 block text-[10px]">UNDERSTOOD</span>
-                <span className="text-white font-bold">{understoodCount} / 50</span>
+                <span className="text-blue-800 block text-[10px] font-semibold">UNDERSTOOD</span>
+                <span className="text-blue-950 font-extrabold">{understoodCount} / 50</span>
               </div>
               <div className="text-right">
-                <span className="text-slate-500 block text-[10px]">BOOKMARKS</span>
-                <span className="text-cyan-400 font-bold">{learner.bookmarks?.length || 0}</span>
+                <span className="text-blue-800 block text-[10px] font-semibold">BOOKMARKS</span>
+                <span className="text-red-600 font-extrabold">{learner.bookmarks?.length || 0}</span>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => onNavigate('examples')}
-            className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-colors flex items-center justify-center gap-2"
+            className="mt-6 w-full py-2.5 px-4 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
           >
             <span>Explore Examples</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -373,28 +370,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Card 3: Logic Visualization Studio */}
-        <div className="bg-[#17191D] border border-[#2d3036] hover:border-slate-500 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-lg">
+        <div className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
-                <Sparkles className="w-5 h-5 text-amber-300" />
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-900">
+                <Sparkles className="w-5 h-5 text-red-600" />
               </div>
-              <span className="text-[10px] font-mono text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/60">
-                Interactive
+              <span className="text-[10px] font-mono text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200 font-bold">
+                8 Labs
               </span>
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-white group-hover:text-slate-100">
+              <h3 className="text-base font-extrabold text-blue-950 group-hover:text-blue-800">
                 Logic Visualization Studio
               </h3>
-              <p className="text-xs text-[#BFC2C9] mt-1 leading-relaxed">
+              <p className="text-xs text-blue-900/80 mt-1 leading-relaxed">
                 Step through Searches, Sorting passes, BST Trees, Graphs (BFS/DFS), Linked Lists, Stacks, Queues, and Code Tracing.
               </p>
             </div>
 
             {/* Modules List */}
-            <div className="bg-[#08090B] p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1 font-mono">
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-[11px] text-blue-900 space-y-1 font-mono">
               <div>• Searches & Sorting (Bubble, Quick, Merge)</div>
               <div>• Trees (BST) & Graphs (BFS / DFS)</div>
               <div>• Linked Lists, Stacks (LIFO), Queues (FIFO)</div>
@@ -403,7 +400,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => onNavigate('visualizer')}
-            className="mt-6 w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-colors flex items-center justify-center gap-2"
+            className="mt-6 w-full py-2.5 px-4 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
           >
             <span>Enter Studio</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -411,42 +408,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Card 4: Daily Bonus Wheel */}
-        <div className="bg-[#17191D] border border-[#2d3036] hover:border-slate-500 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-lg">
+        <div className="bg-white border border-slate-200 hover:border-blue-400 rounded-2xl p-6 flex flex-col justify-between transition-all group shadow-sm hover:shadow-md">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
-                <Award className="w-5 h-5 text-cyan-300" />
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-900">
+                <Award className="w-5 h-5 text-blue-900" />
               </div>
-              <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+              <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
                 isWheelEligible
-                  ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/80 animate-pulse'
-                  : 'bg-slate-800 text-slate-400 border-slate-700'
+                  ? 'bg-red-50 text-red-600 border-red-200'
+                  : 'bg-slate-100 text-blue-900/60 border-slate-200'
               }`}>
                 {isWheelEligible ? '1 Spin Ready' : 'Spun Today'}
               </span>
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-white group-hover:text-slate-100">
+              <h3 className="text-base font-extrabold text-blue-950 group-hover:text-blue-800">
                 Daily Bonus Wheel
               </h3>
-              <p className="text-xs text-[#BFC2C9] mt-1 leading-relaxed">
+              <p className="text-xs text-blue-900/80 mt-1 leading-relaxed">
                 Spin once every 24 hours for bonus practice challenges, streak protection tokens, and visual unlocks.
               </p>
             </div>
 
             {/* Rule note */}
-            <div className="bg-[#08090B] p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
-              <span className="text-slate-300 font-semibold">DSAPTIQ Integrity Rule:</span> Bonus wheel rewards drive learning engagement and never inflate academic PRI scores.
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-[11px] text-blue-900/80 leading-relaxed">
+              <span className="text-blue-950 font-bold">DSAPTIQ Integrity Rule:</span> Bonus wheel rewards drive learning engagement and never inflate academic PRI scores.
             </div>
           </div>
 
           <button
             onClick={() => onNavigate('wheel')}
-            className={`mt-6 w-full py-2.5 px-4 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 ${
+            className={`mt-6 w-full py-2.5 px-4 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs ${
               isWheelEligible
-                ? 'bg-gradient-to-r from-cyan-400 to-slate-200 text-slate-950 hover:brightness-110 shadow'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                ? 'bg-red-600 hover:bg-red-700 text-white'
+                : 'bg-blue-950 hover:bg-blue-900 text-white'
             }`}
           >
             <span>{isWheelEligible ? 'Spin Daily Wheel' : 'View Spin History'}</span>

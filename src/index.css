@@ -2,18 +2,20 @@
 
 @layer base {
   :root {
-    --bg-primary: #08090B;
-    --bg-surface: #17191D;
-    --bg-card: #121418;
-    --text-primary: #F2F3F5;
-    --text-secondary: #BFC2C9;
-    --border-graphite: #414349;
-    --silver-accent: #E2E8F0;
+    --bg-primary: #FFFFFF;
+    --bg-surface: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --text-primary: #0F2942;
+    --text-secondary: #1E3A8A;
+    --text-accent: #DC2626;
+    --border-graphite: #E2E8F0;
+    --blue-navy: #0A192F;
+    --red-corporate: #DC2626;
   }
 
   body {
-    background-color: #08090B;
-    color: #F2F3F5;
+    background-color: #F8FAFC;
+    color: #0F2942;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
@@ -28,33 +30,31 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d0f12;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2b2e35;
+  background: #94A3B8;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #414349;
+  background: #1E3A8A;
 }
 
-/* Metallic gradient subtle border */
-.metallic-border {
-  border: 1px solid #414349;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%), #17191D;
+/* Fortune 500 Corporate Card & Border Utilities */
+.corporate-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(15, 41, 66, 0.05), 0 1px 2px -1px rgba(15, 41, 66, 0.05);
 }
 
-.metallic-card {
-  background: #17191D;
-  border: 1px solid #2d3036;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+.corporate-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(15, 41, 66, 0.1), 0 2px 4px -2px rgba(15, 41, 66, 0.06);
 }
 
-.silver-glow {
-  box-shadow: 0 0 25px -5px rgba(226, 232, 240, 0.15);
+.corporate-red-accent {
+  border-left: 4px solid #DC2626;
 }
 
-.silver-pill {
-  background: linear-gradient(135deg, #F2F3F5 0%, #BFC2C9 100%);
-  color: #08090B;
+.corporate-blue-accent {
+  border-left: 4px solid #1E3A8A;
 }

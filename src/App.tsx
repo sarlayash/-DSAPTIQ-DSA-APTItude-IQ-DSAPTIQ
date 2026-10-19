@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
+import { Sidebar } from './components/Sidebar';
 import { LandingView } from './components/LandingView';
 import { DashboardView } from './components/DashboardView';
 import { AssessmentView } from './components/AssessmentView';
@@ -35,6 +36,7 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const [savedExistingProfile, setSavedExistingProfile] = useState<LearnerProfile | null>(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   // Initialize from localStorage
   useEffect(() => {
@@ -180,20 +182,35 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#08090B] text-[#F2F3F5] flex flex-col justify-between selection:bg-slate-700 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-blue-950 flex flex-col justify-between selection:bg-blue-900 selection:text-white">
       {/* Global Brand Header with International Time Zones */}
-      <div>
-        <Header
+      <Header
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+        learner={learner}
+        pri={pri}
+        onLogout={handleSwitchAccount}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
+      />
+
+      {/* Main Body Layout: Left Navigation Sidebar + Workspaces Content */}
+      <div className="flex-1 flex min-w-0">
+        {/* Left Navigation Sidebar */}
+        <Sidebar
           currentTab={currentTab}
           setCurrentTab={setCurrentTab}
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
           learner={learner}
           pri={pri}
-          onLogout={handleSwitchAccount}
           onOpenProfile={() => setIsProfileModalOpen(true)}
+          onLogout={handleSwitchAccount}
         />
 
-        {/* View Routing */}
-        <main className="pb-16">
+        {/* View Routing Area */}
+        <main className="flex-1 min-w-0 bg-slate-50 min-h-[calc(100vh-140px)]">
           {currentTab === 'dashboard' && (
             learner ? (
               <DashboardView
@@ -241,10 +258,13 @@ export default function App() {
             learner ? (
               <WheelView learner={learner} onRewardClaimed={handleRewardClaimed} />
             ) : (
-              <div className="max-w-xl mx-auto my-12 p-8 bg-[#17191D] border border-slate-800 rounded-2xl text-center space-y-4">
-                <h3 className="text-xl font-bold text-white">Profile Required for Streak Rewards</h3>
-                <p className="text-sm text-slate-400">Complete your initial registration or load a demo profile to unlock the Daily PRI Streak Wheel.</p>
-                <button onClick={() => setCurrentTab('dashboard')} className="px-5 py-2.5 bg-slate-200 hover:bg-white text-slate-900 font-bold rounded-xl text-sm">
+              <div className="max-w-xl mx-auto my-12 p-8 bg-white border border-slate-200 rounded-2xl text-center space-y-4 shadow-sm">
+                <h3 className="text-xl font-bold text-blue-950">Profile Required for Streak Rewards</h3>
+                <p className="text-sm text-blue-900/80">Complete your initial registration or load a demo profile to unlock the Daily PRI Streak Wheel.</p>
+                <button
+                  onClick={() => setCurrentTab('dashboard')}
+                  className="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl text-sm shadow-xs transition-colors cursor-pointer"
+                >
                   Start Onboarding
                 </button>
               </div>
@@ -259,10 +279,13 @@ export default function App() {
                 attempts={attempts}
               />
             ) : (
-              <div className="max-w-xl mx-auto my-12 p-8 bg-[#17191D] border border-slate-800 rounded-2xl text-center space-y-4">
-                <h3 className="text-xl font-bold text-white">PRI Matrix Awaiting Learner Profile</h3>
-                <p className="text-sm text-slate-400">Start an onboarding session or solve questions to compute your real-time 6-vector Placement Readiness Index.</p>
-                <button onClick={() => setCurrentTab('dashboard')} className="px-5 py-2.5 bg-slate-200 hover:bg-white text-slate-900 font-bold rounded-xl text-sm">
+              <div className="max-w-xl mx-auto my-12 p-8 bg-white border border-slate-200 rounded-2xl text-center space-y-4 shadow-sm">
+                <h3 className="text-xl font-bold text-blue-950">PRI Matrix Awaiting Learner Profile</h3>
+                <p className="text-sm text-blue-900/80">Start an onboarding session or solve questions to compute your real-time 6-vector Placement Readiness Index.</p>
+                <button
+                  onClick={() => setCurrentTab('dashboard')}
+                  className="px-5 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl text-sm shadow-xs transition-colors cursor-pointer"
+                >
                   Start Onboarding
                 </button>
               </div>

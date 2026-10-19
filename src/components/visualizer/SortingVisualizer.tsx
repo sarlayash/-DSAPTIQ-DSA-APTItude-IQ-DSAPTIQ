@@ -6,11 +6,7 @@ import {
   SkipForward,
   SkipBack,
   Sliders,
-  Shuffle,
-  BarChart2,
-  Clock,
-  Sparkles,
-  Info
+  Shuffle
 } from 'lucide-react';
 
 type SortAlgorithm = 'bubble' | 'selection' | 'insertion' | 'quick' | 'merge';
@@ -106,7 +102,8 @@ export const SortingVisualizer: React.FC = () => {
           comparing: [i],
           swapping: [],
           sortedIndices: [...sorted],
-          log: `Finding minimum element starting from index ${i}. Current minimum candidate is ${arr[i]}.`,
+          pivotIndex: minIdx,
+          log: `Pass ${i + 1}: Initial min candidate at index ${i} (${arr[i]}). Scanning right...`,
           comparisons,
           swaps,
         });
@@ -115,10 +112,11 @@ export const SortingVisualizer: React.FC = () => {
           comparisons++;
           generated.push({
             arr: [...arr],
-            comparing: [minIdx, j],
+            comparing: [j],
             swapping: [],
             sortedIndices: [...sorted],
-            log: `Checking candidate arr[${j}] = ${arr[j]} against current min arr[${minIdx}] = ${arr[minIdx]}.`,
+            pivotIndex: minIdx,
+            log: `Comparing arr[${j}] (${arr[j]}) with current min arr[${minIdx}] (${arr[minIdx]}).`,
             comparisons,
             swaps,
           });
@@ -127,10 +125,11 @@ export const SortingVisualizer: React.FC = () => {
             minIdx = j;
             generated.push({
               arr: [...arr],
-              comparing: [minIdx],
-              swapping: [],
+              comparing: [],
+              swapping: [minIdx],
               sortedIndices: [...sorted],
-              log: `New minimum discovered: ${arr[minIdx]} at index ${minIdx}.`,
+              pivotIndex: minIdx,
+              log: `New minimum discovered: arr[${minIdx}] = ${arr[minIdx]}.`,
               comparisons,
               swaps,
             });
@@ -148,7 +147,7 @@ export const SortingVisualizer: React.FC = () => {
             comparing: [],
             swapping: [i, minIdx],
             sortedIndices: [...sorted],
-            log: `Swapped found minimum ${arr[i]} into its final sorted position at index ${i}.`,
+            log: `Swapped minimum (${arr[i]}) into sorted boundary position ${i}.`,
             comparisons,
             swaps,
           });
@@ -161,7 +160,7 @@ export const SortingVisualizer: React.FC = () => {
         comparing: [],
         swapping: [],
         sortedIndices: Array.from({ length: n }, (_, i) => i),
-        log: `Selection Sort complete! Total passes: ${n - 1}, Comparisons: ${comparisons}, Swaps: ${swaps}.`,
+        log: `Selection Sort complete. Min elements locked in place.`,
         comparisons,
         swaps,
       });
@@ -176,40 +175,29 @@ export const SortingVisualizer: React.FC = () => {
           comparing: [i],
           swapping: [],
           sortedIndices: [...sorted],
-          log: `Extracted key = ${key} at index ${i}. Finding insertion point in sorted prefix [0..${i - 1}].`,
+          pivotIndex: i,
+          log: `Extracting key arr[${i}] = ${key}. Searching insertion position in sorted prefix.`,
           comparisons,
           swaps,
         });
 
-        while (j >= 0) {
+        while (j >= 0 && arr[j] > key) {
           comparisons++;
+          swaps++;
+          arr[j + 1] = arr[j];
+
           generated.push({
             arr: [...arr],
             comparing: [j],
-            swapping: [],
+            swapping: [j + 1],
             sortedIndices: [...sorted],
-            log: `Comparing key ${key} with prefix element arr[${j}] = ${arr[j]}.`,
+            log: `Shift arr[${j}] (${arr[j + 1]}) right to index ${j + 1}.`,
             comparisons,
             swaps,
           });
-
-          if (arr[j] > key) {
-            swaps++;
-            arr[j + 1] = arr[j];
-            generated.push({
-              arr: [...arr],
-              comparing: [],
-              swapping: [j + 1],
-              sortedIndices: [...sorted],
-              log: `Shifted arr[${j}] (${arr[j]}) one position right to index ${j + 1}.`,
-              comparisons,
-              swaps,
-            });
-            j--;
-          } else {
-            break;
-          }
+          j--;
         }
+
         arr[j + 1] = key;
         sorted.push(i);
 
@@ -218,135 +206,128 @@ export const SortingVisualizer: React.FC = () => {
           comparing: [],
           swapping: [j + 1],
           sortedIndices: Array.from({ length: i + 1 }, (_, k) => k),
-          log: `Inserted key ${key} into position ${j + 1}. Prefix [0..${i}] is now sorted.`,
+          log: `Inserted key ${key} at index ${j + 1}.`,
           comparisons,
           swaps,
         });
       }
-
       generated.push({
         arr: [...arr],
         comparing: [],
         swapping: [],
         sortedIndices: Array.from({ length: n }, (_, i) => i),
-        log: `Insertion Sort complete! Sorted prefix expanded across entire array.`,
+        log: `Insertion Sort complete. Prefix is fully ordered.`,
         comparisons,
         swaps,
       });
     } else if (algorithm === 'quick') {
-      // Quick Sort with Lomuto partitioning
-      const sorted: Set<number> = new Set();
+      const sorted: number[] = [];
 
-      const quickSortHelper = (low: number, high: number) => {
+      const quickSort = (low: number, high: number) => {
         if (low < high) {
           const pivotVal = arr[high];
-          let pIdx = low;
+          let i = low - 1;
 
           generated.push({
             arr: [...arr],
             comparing: [],
             swapping: [],
-            sortedIndices: Array.from(sorted),
+            sortedIndices: [...sorted],
             pivotIndex: high,
-            log: `Partitioning sub-array [${low} .. ${high}] using pivot = ${pivotVal} at index ${high}.`,
+            log: `QuickSort subarray [${low}..${high}]. Chosen pivot: arr[${high}] = ${pivotVal}.`,
             comparisons,
             swaps,
           });
 
-          for (let i = low; i < high; i++) {
+          for (let j = low; j < high; j++) {
             comparisons++;
             generated.push({
               arr: [...arr],
-              comparing: [i, high],
+              comparing: [j, high],
               swapping: [],
-              sortedIndices: Array.from(sorted),
+              sortedIndices: [...sorted],
               pivotIndex: high,
-              log: `Comparing arr[${i}] = ${arr[i]} with pivot ${pivotVal}.`,
+              log: `Comparing arr[${j}] (${arr[j]}) <= pivot (${pivotVal}).`,
               comparisons,
               swaps,
             });
 
-            if (arr[i] < pivotVal) {
-              if (i !== pIdx) {
+            if (arr[j] <= pivotVal) {
+              i++;
+              if (i !== j) {
                 swaps++;
                 const tmp = arr[i];
-                arr[i] = arr[pIdx];
-                arr[pIdx] = tmp;
+                arr[i] = arr[j];
+                arr[j] = tmp;
 
                 generated.push({
                   arr: [...arr],
                   comparing: [],
-                  swapping: [i, pIdx],
-                  sortedIndices: Array.from(sorted),
+                  swapping: [i, j],
+                  sortedIndices: [...sorted],
                   pivotIndex: high,
-                  log: `Swapped arr[${i}] (${arr[pIdx]}) with arr[${pIdx}] (${arr[i]}) to group elements < pivot.`,
+                  log: `Swap arr[${i}] and arr[${j}] to place smaller element on left side of partition.`,
                   comparisons,
                   swaps,
                 });
               }
-              pIdx++;
             }
           }
 
-          // Swap pivot into place
           swaps++;
-          const tmp = arr[pIdx];
-          arr[pIdx] = arr[high];
+          const tmp = arr[i + 1];
+          arr[i + 1] = arr[high];
           arr[high] = tmp;
-          sorted.add(pIdx);
+          const partitionIndex = i + 1;
+          sorted.push(partitionIndex);
 
           generated.push({
             arr: [...arr],
             comparing: [],
-            swapping: [pIdx, high],
-            sortedIndices: Array.from(sorted),
-            pivotIndex: pIdx,
-            log: `Pivot ${arr[pIdx]} placed at sorted boundary index ${pIdx}. Elements left are < ${arr[pIdx]}, right are ≥ ${arr[pIdx]}.`,
+            swapping: [partitionIndex, high],
+            sortedIndices: [...sorted],
+            log: `Placed pivot ${arr[partitionIndex]} into final partition position ${partitionIndex}.`,
             comparisons,
             swaps,
           });
 
-          quickSortHelper(low, pIdx - 1);
-          quickSortHelper(pIdx + 1, high);
+          quickSort(low, partitionIndex - 1);
+          quickSort(partitionIndex + 1, high);
         } else if (low === high) {
-          sorted.add(low);
+          sorted.push(low);
         }
       };
 
-      quickSortHelper(0, n - 1);
+      quickSort(0, n - 1);
       generated.push({
         arr: [...arr],
         comparing: [],
         swapping: [],
         sortedIndices: Array.from({ length: n }, (_, i) => i),
-        log: `Quick Sort complete! All partitions converged. Comparisons: ${comparisons}, Swaps: ${swaps}.`,
+        log: `Quick Sort completed across all partition branches.`,
         comparisons,
         swaps,
       });
     } else if (algorithm === 'merge') {
-      // Merge Sort
-      const sorted: Set<number> = new Set();
+      const sorted: number[] = [];
 
-      const merge = (l: number, m: number, r: number) => {
-        const leftArr = arr.slice(l, m + 1);
-        const rightArr = arr.slice(m + 1, r + 1);
-        let i = 0;
-        let j = 0;
-        let k = l;
+      const merge = (left: number, mid: number, right: number) => {
+        const leftArr = arr.slice(left, mid + 1);
+        const rightArr = arr.slice(mid + 1, right + 1);
+        let i = 0, j = 0, k = left;
 
         generated.push({
           arr: [...arr],
-          comparing: Array.from({ length: r - l + 1 }, (_, x) => l + x),
+          comparing: Array.from({ length: right - left + 1 }, (_, idx) => left + idx),
           swapping: [],
-          sortedIndices: Array.from(sorted),
-          log: `Merging two sorted sublists: [${leftArr.join(', ')}] and [${rightArr.join(', ')}].`,
+          sortedIndices: [...sorted],
+          log: `Merging subarrays [${left}..${mid}] and [${mid + 1}..${right}].`,
           comparisons,
           swaps,
         });
 
         while (i < leftArr.length && j < rightArr.length) {
           comparisons++;
-          swaps++;
           if (leftArr[i] <= rightArr[j]) {
             arr[k] = leftArr[i];
             i++;
@@ -354,12 +335,13 @@ export const SortingVisualizer: React.FC = () => {
             arr[k] = rightArr[j];
             j++;
           }
+          swaps++;
           generated.push({
             arr: [...arr],
             comparing: [],
             swapping: [k],
-            sortedIndices: Array.from(sorted),
-            log: `Placed ${arr[k]} into position ${k}.`,
+            sortedIndices: [...sorted],
+            log: `Placed smaller element ${arr[k]} into index ${k}.`,
             comparisons,
             swaps,
           });
@@ -367,14 +349,14 @@ export const SortingVisualizer: React.FC = () => {
         }
 
         while (i < leftArr.length) {
-          swaps++;
           arr[k] = leftArr[i];
+          swaps++;
           generated.push({
             arr: [...arr],
             comparing: [],
             swapping: [k],
-            sortedIndices: Array.from(sorted),
-            log: `Flushed remaining left element ${arr[k]} into index ${k}.`,
+            sortedIndices: [...sorted],
+            log: `Flushed remaining left element ${arr[k]} to index ${k}.`,
             comparisons,
             swaps,
           });
@@ -383,14 +365,14 @@ export const SortingVisualizer: React.FC = () => {
         }
 
         while (j < rightArr.length) {
-          swaps++;
           arr[k] = rightArr[j];
+          swaps++;
           generated.push({
             arr: [...arr],
             comparing: [],
             swapping: [k],
-            sortedIndices: Array.from(sorted),
-            log: `Flushed remaining right element ${arr[k]} into index ${k}.`,
+            sortedIndices: [...sorted],
+            log: `Flushed remaining right element ${arr[k]} to index ${k}.`,
             comparisons,
             swaps,
           });
@@ -398,27 +380,27 @@ export const SortingVisualizer: React.FC = () => {
           k++;
         }
 
-        if (l === 0 && r === n - 1) {
-          for (let idx = 0; idx < n; idx++) sorted.add(idx);
+        for (let idx = left; idx <= right; idx++) {
+          if (!sorted.includes(idx)) sorted.push(idx);
         }
       };
 
-      const mergeSortHelper = (l: number, r: number) => {
-        if (l < r) {
-          const m = Math.floor(l + (r - l) / 2);
-          mergeSortHelper(l, m);
-          mergeSortHelper(m + 1, r);
-          merge(l, m, r);
+      const mergeSort = (left: number, right: number) => {
+        if (left < right) {
+          const mid = Math.floor((left + right) / 2);
+          mergeSort(left, mid);
+          mergeSort(mid + 1, right);
+          merge(left, mid, right);
         }
       };
 
-      mergeSortHelper(0, n - 1);
+      mergeSort(0, n - 1);
       generated.push({
         arr: [...arr],
         comparing: [],
         swapping: [],
         sortedIndices: Array.from({ length: n }, (_, i) => i),
-        log: `Merge Sort complete! Array stably merged into sorted order.`,
+        log: `Merge Sort complete! Sub-buffers combined in O(N log N) time.`,
         comparisons,
         swaps,
       });
@@ -427,9 +409,9 @@ export const SortingVisualizer: React.FC = () => {
     setSteps(generated);
     setCurrentStepIdx(0);
     setIsPlaying(false);
-  }, [algorithm, baseArray]);
+  }, [baseArray, algorithm]);
 
-  // Autoplay handler
+  // Autoplay ticker
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isPlaying) {
@@ -446,7 +428,7 @@ export const SortingVisualizer: React.FC = () => {
     return () => clearInterval(timer);
   }, [isPlaying, steps.length, speed]);
 
-  const activeStep = steps[currentStepIdx] || steps[0] || {
+  const activeStep: SortStep = steps[currentStepIdx] || {
     arr: baseArray,
     comparing: [],
     swapping: [],
@@ -487,24 +469,24 @@ export const SortingVisualizer: React.FC = () => {
   const comp = getComplexity(algorithm);
 
   return (
-    <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6 select-none">
       {/* Header & Algorithm Selection */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-[#2d3036] pb-5">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <Sliders className="w-5 h-5 text-amber-400" />
-            <h2 className="text-xl font-bold text-white">Sorting Algorithms Lab</h2>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-800">
+            <Sliders className="w-5 h-5 text-red-600" />
+            <h2 className="text-xl font-extrabold text-blue-950">Sorting Algorithms Lab</h2>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold">
               Avg: {comp.time} · Space: {comp.space}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-blue-900 mt-1 font-medium">
             Observe comparison passes, partition boundaries, insertion keys, and recursive merge buffers.
           </p>
         </div>
 
         {/* Algorithm Selection Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-[#08090B] p-1 rounded-xl border border-slate-800">
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200">
           {(
             [
               { id: 'bubble', label: 'Bubble' },
@@ -517,10 +499,10 @@ export const SortingVisualizer: React.FC = () => {
             <button
               key={m.id}
               onClick={() => setAlgorithm(m.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 algorithm === m.id
-                  ? 'bg-slate-200 text-slate-900 font-bold shadow'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-900 text-white shadow-2xs'
+                  : 'text-blue-900 hover:text-blue-950 hover:bg-blue-100/60'
               }`}
             >
               {m.label}
@@ -530,20 +512,20 @@ export const SortingVisualizer: React.FC = () => {
       </div>
 
       {/* Array Controls & Custom Input */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#08090B] p-4 rounded-xl border border-slate-800 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
         <div className="flex items-center gap-2 flex-1 min-w-[280px]">
-          <span className="text-slate-400 font-medium shrink-0">Values (1-100):</span>
+          <span className="text-blue-950 font-bold shrink-0">Values (1-100):</span>
           <input
             type="text"
             value={customArrayInput}
             onChange={(e) => setCustomArrayInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleApplyCustom()}
             placeholder="comma separated"
-            className="flex-1 px-3 py-1.5 rounded-lg bg-[#17191D] border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-amber-400"
+            className="flex-1 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-blue-950 font-mono text-xs focus:outline-none focus:border-blue-400 font-semibold"
           />
           <button
             onClick={handleApplyCustom}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium"
+            className="px-3.5 py-1.5 rounded-lg bg-blue-900 hover:bg-blue-800 text-white font-bold transition-colors cursor-pointer shadow-2xs"
           >
             Apply
           </button>
@@ -552,9 +534,9 @@ export const SortingVisualizer: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleShuffle}
-            className="px-3.5 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-800 font-semibold text-xs flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-colors"
           >
-            <Shuffle className="w-3.5 h-3.5" />
+            <Shuffle className="w-3.5 h-3.5 text-red-600" />
             <span>Shuffle</span>
           </button>
           <button
@@ -563,7 +545,7 @@ export const SortingVisualizer: React.FC = () => {
               setBaseArray(def);
               setCustomArrayInput(def.join(', '));
             }}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs"
+            className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-blue-900 border border-slate-200 text-xs font-semibold cursor-pointer"
           >
             Reset Array
           </button>
@@ -571,11 +553,11 @@ export const SortingVisualizer: React.FC = () => {
       </div>
 
       {/* Stepper Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#08090B] p-3 rounded-xl border border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentStepIdx(0)}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 text-blue-900 border border-slate-200 text-xs transition-colors cursor-pointer"
             title="Reset to beginning"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -583,14 +565,14 @@ export const SortingVisualizer: React.FC = () => {
           <button
             onClick={() => setCurrentStepIdx((prev) => Math.max(0, prev - 1))}
             disabled={currentStepIdx === 0}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs transition-colors"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-900 border border-slate-200 text-xs transition-colors cursor-pointer"
             title="Previous step"
           >
             <SkipBack className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setIsPlaying((prev) => !prev)}
-            className="px-4 py-1.5 rounded-lg bg-slate-200 hover:bg-white text-slate-900 font-bold text-xs flex items-center gap-1.5 shadow"
+            className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
           >
             {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
             <span>{isPlaying ? 'Pause' : 'Play'}</span>
@@ -598,14 +580,14 @@ export const SortingVisualizer: React.FC = () => {
           <button
             onClick={() => setCurrentStepIdx((prev) => Math.min(steps.length - 1, prev + 1))}
             disabled={currentStepIdx >= steps.length - 1}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs transition-colors"
+            className="p-2 rounded-lg bg-white hover:bg-slate-100 disabled:opacity-30 text-blue-900 border border-slate-200 text-xs transition-colors cursor-pointer"
             title="Next step"
           >
             <SkipForward className="w-3.5 h-3.5" />
           </button>
 
           {/* Speed switcher */}
-          <div className="flex items-center gap-1 ml-3 pl-3 border-l border-slate-800 text-[11px] text-slate-400">
+          <div className="flex items-center gap-1 ml-3 pl-3 border-l border-slate-200 text-[11px] text-blue-900 font-bold">
             <span>Speed:</span>
             {[
               { label: 'Slow', val: 1200 },
@@ -615,10 +597,10 @@ export const SortingVisualizer: React.FC = () => {
               <button
                 key={s.label}
                 onClick={() => setSpeed(s.val)}
-                className={`px-2 py-0.5 rounded text-[10px] font-mono ${
+                className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold cursor-pointer ${
                   speed === s.val
-                    ? 'bg-slate-700 text-white font-bold'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-blue-900 text-white'
+                    : 'text-blue-900 hover:bg-blue-100'
                 }`}
               >
                 {s.label}
@@ -627,42 +609,42 @@ export const SortingVisualizer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-mono text-slate-300">
+        <div className="flex items-center gap-4 text-xs font-mono text-blue-900">
           <div>
-            Comparisons: <span className="text-amber-400 font-bold">{activeStep.comparisons}</span>
+            Comparisons: <span className="text-red-600 font-extrabold">{activeStep.comparisons}</span>
           </div>
           <div>
-            Swaps / Shifts: <span className="text-cyan-400 font-bold">{activeStep.swaps}</span>
+            Swaps / Shifts: <span className="text-blue-950 font-extrabold">{activeStep.swaps}</span>
           </div>
           <div>
-            Step <span className="text-white font-bold">{currentStepIdx + 1}</span> / {steps.length}
+            Step <span className="text-blue-950 font-extrabold">{currentStepIdx + 1}</span> / {steps.length}
           </div>
         </div>
       </div>
 
       {/* Bar Chart Visualization Canvas */}
-      <div className="p-8 rounded-2xl bg-[#08090B] border border-slate-800 space-y-6">
-        <div className="h-64 flex items-end justify-center gap-2 sm:gap-4 px-4 border-b border-slate-800 pb-2">
+      <div className="p-8 rounded-2xl bg-slate-50 border border-slate-200 space-y-6">
+        <div className="h-64 flex items-end justify-center gap-2 sm:gap-4 px-4 border-b border-slate-200 pb-2">
           {activeStep.arr.map((val, idx) => {
             const isComparing = activeStep.comparing.includes(idx);
             const isSwapping = activeStep.swapping.includes(idx);
             const isSorted = activeStep.sortedIndices.includes(idx);
             const isPivot = activeStep.pivotIndex === idx;
 
-            let barColor = 'bg-slate-600 border-slate-500 text-slate-300';
+            let barColor = 'bg-blue-200 border-blue-300 text-blue-950';
             let labelBadge = '';
 
             if (isPivot) {
-              barColor = 'bg-purple-500 border-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.5)] text-purple-200';
+              barColor = 'bg-blue-950 border-blue-900 shadow-md text-white';
               labelBadge = 'PIVOT';
             } else if (isSwapping) {
-              barColor = 'bg-rose-500 border-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.6)] text-rose-200';
+              barColor = 'bg-red-600 border-red-700 shadow-md text-white';
               labelBadge = 'SWAP';
             } else if (isComparing) {
-              barColor = 'bg-amber-400 border-white shadow-[0_0_15px_rgba(251,191,36,0.6)] text-amber-200';
+              barColor = 'bg-red-400 border-red-500 shadow-sm text-white';
               labelBadge = 'CMP';
             } else if (isSorted) {
-              barColor = 'bg-emerald-500 border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)] text-emerald-200';
+              barColor = 'bg-blue-800 border-blue-900 shadow-sm text-white';
             }
 
             const barHeight = Math.max(20, (val / 100) * 190);
@@ -670,52 +652,52 @@ export const SortingVisualizer: React.FC = () => {
             return (
               <div key={idx} className="flex flex-col items-center gap-2 flex-1 max-w-[56px] transition-all">
                 {/* Status Indicator */}
-                <span className="h-4 font-mono text-[9px] font-bold text-amber-300">
+                <span className="h-4 font-mono text-[9px] font-extrabold text-red-600">
                   {labelBadge}
                 </span>
 
-                <span className="font-mono text-xs text-white font-bold">{val}</span>
+                <span className="font-mono text-xs text-blue-950 font-extrabold">{val}</span>
                 <div
                   className={`w-full rounded-t-xl border transition-all duration-300 ${barColor}`}
                   style={{ height: `${barHeight}px` }}
                 />
-                <span className="font-mono text-[10px] text-slate-500">[{idx}]</span>
+                <span className="font-mono text-[10px] text-blue-800 font-bold">[{idx}]</span>
               </div>
             );
           })}
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] font-mono text-slate-400 pt-2">
+        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] font-mono text-blue-950 font-bold pt-2">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-slate-600 border border-slate-500" />
+            <span className="w-3 h-3 rounded bg-blue-200 border border-blue-300" />
             <span>Unsorted</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-amber-400 border border-white" />
-            <span>Comparing</span>
+            <span className="w-3 h-3 rounded bg-red-400 border border-red-500" />
+            <span className="text-red-600">Comparing</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-rose-500 border border-rose-300" />
-            <span>Swapping / Shifting</span>
+            <span className="w-3 h-3 rounded bg-red-600 border border-red-700" />
+            <span className="text-red-700">Swapping / Shifting</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-purple-500 border border-purple-300" />
-            <span>Pivot</span>
+            <span className="w-3 h-3 rounded bg-blue-950 border border-blue-900" />
+            <span className="text-blue-950">Pivot</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-emerald-500 border border-emerald-400" />
-            <span>Sorted Position</span>
+            <span className="w-3 h-3 rounded bg-blue-800 border border-blue-900" />
+            <span className="text-blue-900">Sorted Position</span>
           </div>
         </div>
       </div>
 
       {/* Execution Log */}
-      <div className="p-4 rounded-xl bg-[#121418] border border-slate-800 space-y-1 font-mono text-xs">
-        <span className="text-[10px] text-slate-400 uppercase block font-bold">
+      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-1 font-mono text-xs">
+        <span className="text-[10px] text-blue-950 uppercase block font-extrabold">
           Algorithm Execution State:
         </span>
-        <p className="text-slate-200 leading-relaxed">{activeStep.log}</p>
+        <p className="text-blue-950 leading-relaxed font-medium">{activeStep.log}</p>
       </div>
     </div>
   );

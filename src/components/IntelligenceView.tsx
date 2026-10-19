@@ -1,18 +1,6 @@
 import React from 'react';
 import {
-  BarChart3,
-  TrendingUp,
-  Award,
-  Zap,
-  Target,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  FileText,
-  Printer,
-  ShieldCheck,
-  Cpu,
-  Sparkles
+  Printer
 } from 'lucide-react';
 import { LearnerProfile, PRISnapshot, QuestionAttempt } from '../types';
 import { DAILY_100_QUESTIONS } from '../data/questionBank';
@@ -72,48 +60,48 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
     .filter((m) => m.question !== undefined);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 select-none">
       {/* Header */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl print:hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs print:hidden">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-400 uppercase">
+            <span className="text-xs font-mono font-bold tracking-widest text-blue-900 uppercase">
               COGNITIVE DIAGNOSTICS
             </span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-              PRI Engine v2.6
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-red-50 text-red-600 border border-red-200 font-bold">
+              PRI Matrix Engine v2.6
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-950 tracking-tight">
             Performance Intelligence & PRI Analytics
           </h1>
-          <p className="text-xs sm:text-sm text-[#BFC2C9] max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-blue-900 max-w-2xl leading-relaxed font-medium">
             Transparent, explainable intelligence. Understand how your demonstrated performance translates into your overall Placement Readiness Index.
           </p>
         </div>
 
         <button
           onClick={handlePrint}
-          className="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-white text-slate-900 font-bold text-xs flex items-center gap-2 shadow shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs shrink-0 transition-colors cursor-pointer"
         >
-          <Printer className="w-4 h-4" />
+          <Printer className="w-4 h-4 text-white" />
           <span>Print Readiness Transcript</span>
         </button>
       </div>
 
       {/* Primary Mathematical Model Explainer */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-        <div className="border-b border-[#2d3036] pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div>
-            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
+            <span className="text-xs font-mono text-blue-900 font-bold uppercase tracking-wider block">
               EVIDENCE-BASED EVALUATION FORMULA
             </span>
-            <h2 className="text-lg sm:text-xl font-bold text-white mt-0.5">
+            <h2 className="text-lg sm:text-xl font-extrabold text-blue-950 mt-0.5">
               How Placement Readiness Index (PRI) Is Calculated
             </h2>
           </div>
-          <div className="font-mono text-xs text-slate-300 bg-[#08090B] px-3 py-1.5 rounded-xl border border-slate-800">
-            \[ PRI = \sum_{`{i=1}`}^{`{6}`} w_i s_i \]
+          <div className="font-mono text-xs text-blue-950 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 font-bold">
+            PRI = Σ (w_i × s_i)
           </div>
         </div>
 
@@ -139,7 +127,7 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
               desc: 'Line-by-line pointer dereferencing, recursion depth, and system scenarios.',
             },
             {
-              title: 'Accuracy & Error Reduction',
+              title: 'Accuracy & Precision',
               weight: '10%',
               score: pri.components.accuracy,
               desc: 'Strict precision ratio of correct answers versus total attempted questions.',
@@ -151,7 +139,7 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
               desc: 'Actual execution seconds measured against industry standard target benchmarks.',
             },
             {
-              title: 'Demonstrated Consistency',
+              title: 'Daily Consistency',
               weight: '10%',
               score: pri.components.consistency,
               desc: 'Demonstrated consecutive daily active practice and assessment volume.',
@@ -159,24 +147,24 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-2 flex flex-col justify-between"
+              className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-slate-400 font-bold uppercase">{item.title}</span>
-                  <span className="text-slate-500 font-bold">{item.weight}</span>
+                  <span className="text-blue-950 font-extrabold uppercase">{item.title}</span>
+                  <span className="text-red-600 font-bold">{item.weight}</span>
                 </div>
-                <div className="text-2xl font-bold font-mono text-white mt-1">
+                <div className="text-2xl font-extrabold font-mono text-blue-950 mt-1">
                   {item.score}%
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                <p className="text-[11px] text-blue-900 mt-1 leading-relaxed font-medium">
                   {item.desc}
                 </p>
               </div>
 
-              <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden mt-3">
+              <div className="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden mt-3">
                 <div
-                  className="h-full bg-slate-300 rounded-full"
+                  className="h-full bg-blue-900 rounded-full"
                   style={{ width: `${item.score}%` }}
                 />
               </div>
@@ -186,12 +174,12 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
       </div>
 
       {/* Domain Mastery Breakdown */}
-      <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-        <div className="border-b border-[#2d3036] pb-4">
-          <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="border-b border-slate-100 pb-4">
+          <span className="text-xs font-mono text-blue-900 font-bold uppercase tracking-wider block">
             SYLLABUS COVERAGE
           </span>
-          <h2 className="text-lg sm:text-xl font-bold text-white mt-0.5">
+          <h2 className="text-lg sm:text-xl font-extrabold text-blue-950 mt-0.5">
             Domain-Wise Assessment Breakdown
           </h2>
         </div>
@@ -200,31 +188,31 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
           {domainStats.map((ds) => (
             <div
               key={ds.domain}
-              className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-2"
+              className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white">{ds.domain}</span>
-                  <span className="text-[11px] text-slate-500 font-mono">
+                  <span className="font-extrabold text-blue-950">{ds.domain}</span>
+                  <span className="text-[11px] text-blue-800 font-mono">
                     ({ds.attempted}/{ds.total} attempted)
                   </span>
                 </div>
                 <div className="flex items-center gap-4 font-mono">
-                  <span className="text-slate-400 text-[11px]">
-                    Correct: <strong className="text-white">{ds.correct}</strong>
+                  <span className="text-blue-900 text-[11px] font-medium">
+                    Correct: <strong className="text-blue-950">{ds.correct}</strong>
                   </span>
                   <span className={`font-bold ${
-                    ds.accuracy >= 75 ? 'text-emerald-400' : ds.accuracy >= 50 ? 'text-slate-200' : 'text-amber-400'
+                    ds.accuracy >= 75 ? 'text-blue-950' : 'text-red-600'
                   }`}>
                     {ds.accuracy}% Accuracy
                   </span>
                 </div>
               </div>
 
-              <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
-                    ds.accuracy >= 75 ? 'bg-emerald-400' : ds.accuracy >= 50 ? 'bg-slate-300' : 'bg-amber-400'
+                    ds.accuracy >= 75 ? 'bg-blue-900' : 'bg-red-600'
                   }`}
                   style={{ width: `${ds.accuracy}%` }}
                 />
@@ -236,44 +224,44 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
 
       {/* Targeted Mistake & Gap Log */}
       {recentMistakes.length > 0 && (
-        <div className="bg-[#17191D] border border-[#2d3036] rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="border-b border-[#2d3036] pb-4 flex items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="border-b border-slate-100 pb-4 flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
+              <span className="text-xs font-mono text-red-600 font-bold uppercase tracking-wider block">
                 GAP INTERVENTION
               </span>
-              <h2 className="text-lg sm:text-xl font-bold text-white mt-0.5">
+              <h2 className="text-lg sm:text-xl font-extrabold text-blue-950 mt-0.5">
                 Recent Misconceptions & Pitfalls
               </h2>
             </div>
-            <span className="text-xs text-rose-400 font-mono bg-rose-950/40 border border-rose-800 px-2 py-0.5 rounded">
+            <span className="text-xs text-red-600 font-mono bg-red-50 border border-red-200 px-2 py-0.5 rounded font-bold">
               {recentMistakes.length} Questions for Revision
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {recentMistakes.map(({ attempt, question }) => {
+            {recentMistakes.map(({ question }) => {
               if (!question) return null;
               return (
                 <div
                   key={question.id}
-                  className="p-4 rounded-xl bg-[#08090B] border border-slate-800 space-y-2.5"
+                  className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5"
                 >
                   <div className="flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-slate-400 font-bold">{question.id} · {question.domain}</span>
-                    <span className="text-rose-400">Incorrect Choice</span>
+                    <span className="text-blue-900 font-bold">{question.id} · {question.domain}</span>
+                    <span className="text-red-600 font-bold">Incorrect Choice</span>
                   </div>
 
-                  <p className="text-xs text-slate-200 line-clamp-2">
+                  <p className="text-xs text-blue-950 line-clamp-2 font-medium">
                     {question.text}
                   </p>
 
-                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-300 space-y-1">
+                  <div className="p-2.5 rounded-lg bg-white border border-blue-100 text-[11px] text-blue-950 space-y-1">
                     <div>
-                      <strong className="text-emerald-400">Correct Answer:</strong> {question.options[question.correctIndex]}
+                      <strong className="text-blue-950">Correct Answer:</strong> {question.options[question.correctIndex]}
                     </div>
                     {question.commonPitfall && (
-                      <div className="text-amber-300/80">
+                      <div className="text-red-700 font-medium">
                         <strong>Pitfall:</strong> {question.commonPitfall}
                       </div>
                     )}
@@ -285,51 +273,51 @@ export const IntelligenceView: React.FC<IntelligenceViewProps> = ({
         </div>
       )}
 
-      {/* Official Placement Readiness Transcript (Print-Optimized / Clean Card) */}
-      <div className="bg-[#17191D] border-2 border-slate-500 rounded-2xl p-8 shadow-2xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-700 pb-4">
+      {/* Official Placement Readiness Transcript */}
+      <div className="bg-white border-2 border-blue-900 rounded-2xl p-8 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-blue-100 pb-4">
           <div className="space-y-1">
-            <span className="text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase">
+            <span className="text-[10px] font-mono font-bold tracking-widest text-red-600 uppercase">
               OFFICIAL READINESS TRANSCRIPT
             </span>
-            <h3 className="text-xl font-extrabold text-white">
+            <h3 className="text-xl font-extrabold text-blue-950">
               Kapil Presents DSAPTIQ Candidate Assessment
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-blue-900 font-medium">
               Endorsed by SARLAYASH Mission · DSA + APTItude + IQ = DSAPTIQ
             </p>
           </div>
 
           <div className="text-right font-mono">
-            <div className="text-xs text-slate-400">PLACEMENT READINESS INDEX</div>
-            <div className="text-3xl font-extrabold text-white">
-              {pri.overallScore} <span className="text-sm text-slate-400">/ 100</span>
+            <div className="text-xs text-blue-900 font-bold">PLACEMENT READINESS INDEX</div>
+            <div className="text-3xl font-extrabold text-red-600">
+              {pri.overallScore} <span className="text-sm text-blue-900 font-normal">/ 100</span>
             </div>
           </div>
         </div>
 
         {/* Candidate Details */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-[#08090B] border border-slate-800 text-xs font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono">
           <div>
-            <span className="text-slate-500 text-[10px] block uppercase">Candidate Name</span>
-            <span className="text-white font-bold">{learner.name}</span>
+            <span className="text-blue-800 text-[10px] block uppercase font-bold">Candidate Name</span>
+            <span className="text-blue-950 font-extrabold">{learner.name}</span>
           </div>
           <div>
-            <span className="text-slate-500 text-[10px] block uppercase">Target Track</span>
-            <span className="text-slate-300">{learner.target}</span>
+            <span className="text-blue-800 text-[10px] block uppercase font-bold">Target Track</span>
+            <span className="text-blue-900 font-bold">{learner.target}</span>
           </div>
           <div>
-            <span className="text-slate-500 text-[10px] block uppercase">Readiness Band</span>
-            <span className="text-slate-200 font-bold">{pri.interpretation}</span>
+            <span className="text-blue-800 text-[10px] block uppercase font-bold">Readiness Band</span>
+            <span className="text-red-600 font-extrabold">{pri.interpretation}</span>
           </div>
           <div>
-            <span className="text-slate-500 text-[10px] block uppercase">Access ID</span>
-            <span className="text-slate-300">{learner.accessCode}</span>
+            <span className="text-blue-800 text-[10px] block uppercase font-bold">Access ID</span>
+            <span className="text-blue-950 font-bold">{learner.accessCode}</span>
           </div>
         </div>
 
-        <div className="text-[11px] text-slate-500 leading-relaxed font-mono text-center pt-2">
-          This transcript reflects demonstrated problem-solving logic, aptitude accuracy, and DSA algorithmic competencies recorded on the DSAPTIQ platform.
+        <div className="text-[11px] text-blue-900 leading-relaxed font-mono text-center pt-2 font-medium">
+          This transcript reflects demonstrated problem-solving logic, aptitude accuracy, and DSA algorithmic competencies calibrated on the DSAPTIQ platform.
         </div>
       </div>
     </div>
