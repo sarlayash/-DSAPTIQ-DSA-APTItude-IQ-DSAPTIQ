@@ -389,15 +389,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 Logic Visualization Studio
               </h3>
               <p className="text-xs text-[#BFC2C9] mt-1 leading-relaxed">
-                Step through Binary Search intervals, Stack/Queue/List state mutations, Sorting swaps, and Code Tracing.
+                Step through Searches, Sorting passes, BST Trees, Graphs (BFS/DFS), Linked Lists, Stacks, Queues, and Code Tracing.
               </p>
             </div>
 
             {/* Modules List */}
             <div className="bg-[#08090B] p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1 font-mono">
-              <div>• Binary Search Halver</div>
-              <div>• Stack & Queue State Machine</div>
-              <div>• Sorting & Code Tracing Lab</div>
+              <div>• Searches & Sorting (Bubble, Quick, Merge)</div>
+              <div>• Trees (BST) & Graphs (BFS / DFS)</div>
+              <div>• Linked Lists, Stacks (LIFO), Queues (FIFO)</div>
             </div>
           </div>
 

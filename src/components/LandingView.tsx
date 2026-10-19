@@ -404,7 +404,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
               </div>
               <h3 className="text-lg font-bold text-white">Visual-First Logic Studio</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Step through interactive algorithms: Binary Search halving, Stack/Queue/Linked List operations, Sorting bar animations, and live Code Tracing variable watch tables.
+                Step through interactive algorithms: Searches (Binary, Linear, Jump), Sorting (Bubble, Quick, Merge), BST Trees, Graphs (BFS/DFS), Singly &amp; Doubly Linked Lists, Stacks, Queues, and live Code Tracing.
               </p>
             </div>
 
